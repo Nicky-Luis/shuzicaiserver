@@ -5,17 +5,25 @@ package com.shuzicai.server.entry;
  * 记录游戏信息
  */
 public class GameInfo {
-    //游戏类型0:涨跌，1猜尾数，2：猜全数
+
+    //objectId
+    public final static String objectId_zhangdie = "vnGeVVVb";
+    public final static String objectId_weishu = "L4PV5556";
+    public final static String objectId_quanshu = "J5IpAAAE";
+    public final static String objectId_london = "YztiGGGg";
+    //类型
+    public final static int type_zhangdie = 0;
+    public final static int type_weishu = 1;
+    public final static int type_quanshu = 2;
+    public final static int type_london = 3;
+    //游戏类型0:涨跌，1猜尾数，2：猜全数,3:伦敦金
     private int gameType;
     //最新的期数
     private int newestNum;
-    //objectId
-    private String objectId;
 
-    public GameInfo(int gameType, int newestNum, String objectId) {
+    public GameInfo(int gameType, int newestNum) {
         this.gameType = gameType;
         this.newestNum = newestNum;
-        this.objectId = objectId;
     }
 
     public GameInfo() {
@@ -35,13 +43,5 @@ public class GameInfo {
 
     public void setNewestNum(int newestNum) {
         this.newestNum = newestNum;
-    }
-
-    public void setObjectId(String objectId) {
-        this.objectId = objectId;
-    }
-
-    public String getObjectId() {
-        return objectId;
     }
 }

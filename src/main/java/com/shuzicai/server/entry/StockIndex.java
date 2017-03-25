@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Created by Nicky on 2017/2/21.
  */
-public class StockIndex1 {
+public class StockIndex {
     private float yestodayClosePrice;
     private float todayMax;
     private float todayMin;
@@ -31,7 +31,7 @@ public class StockIndex1 {
     private float diff_rate;
     private float minPrice;
 
-    public StockIndex1(float yestodayClosePrice, float todayMax, float todayMin, float max52, float diff_money, float
+    public StockIndex(float yestodayClosePrice, float todayMax, float todayMin, float max52, float diff_money, float
             tradeNum, String code, float maxPrice, float nowPrice, float min52, Date time, String name, double
             tradeAmount, float swing, float todayOpenPrice, float diff_rate, float minPrice) {
         this.yestodayClosePrice = yestodayClosePrice;
@@ -53,7 +53,7 @@ public class StockIndex1 {
         this.minPrice = minPrice;
     }
 
-    public StockIndex1() {
+    public StockIndex() {
     }
 
 }

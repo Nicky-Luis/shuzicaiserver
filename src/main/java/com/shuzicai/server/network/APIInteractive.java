@@ -4,6 +4,7 @@ package com.shuzicai.server.network;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.shuzicai.server.entry.GameInfo;
+import com.shuzicai.server.entry.LondonGold;
 import com.shuzicai.server.entry.UpDownResult;
 
 import java.util.List;
@@ -63,16 +64,31 @@ public class APIInteractive {
     /**
      * 获取游戏记录信息
      *
-     * @param where
+     * @param objectId
      * @param callback
      */
-    public static void getGameInfo(String where, final INetworkResponse callback) {
+    public static void getGameInfo(String objectId, final INetworkResponse callback) {
         if (null == request) {
             initRetrofit();
         }
-        Call<JsonObject> call = request.getGameInfo(where);
+        Call<JsonObject> call = request.getGameInfo(objectId);
         NetworkRequest.netRequest(call, callback);
     }
+
+    /**
+     * 提交股票信息
+     *
+     * @param indexData
+     * @param callback
+     */
+    public static void submitLondonGoldData(LondonGold indexData, final INetworkResponse callback) {
+        if (null == request) {
+            initRetrofit();
+        }
+        Call<JsonObject> call = request.submitLondonGold(indexData);
+        NetworkRequest.netRequest(call, callback);
+    }
+
 
     /**
      * 获取商品信息

@@ -4,6 +4,7 @@ package com.shuzicai.server.network;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.shuzicai.server.entry.GameInfo;
+import com.shuzicai.server.entry.LondonGold;
 import com.shuzicai.server.entry.UpDownResult;
 
 import java.util.List;
@@ -32,13 +33,23 @@ public interface APICollections {
 
 
     /**
-     * 获取游戏记录信息
+     * 获取伦敦金游戏记录信息
      *
-     * @param where
+     * @param objectId
      * @return
      */
-    @GET("1/classes/GameInfo")
-    Call<JsonObject> getGameInfo(@Query("where") String where);
+    @GET("1/classes/GameInfo/{objectId}")
+    Call<JsonObject> getGameInfo(@Path("objectId") String objectId);
+
+    /**
+     * 提交伦敦金信息
+     *
+     * @param bean
+     * @return
+     */
+    @POST("1/classes/LondonGold")
+    Call<JsonObject> submitLondonGold(@Body LondonGold bean);
+
 
     /**
      * 修改用户信息
@@ -50,7 +61,6 @@ public interface APICollections {
     @PUT("1/classes/GameInfo/{objectID}")
     Call<JsonObject> updateGameInfo(@Path("objectID") String objectID,
                                     @Body GameInfo bean);
-
 
     /**
      * 获取商品信息
@@ -72,8 +82,6 @@ public interface APICollections {
     @GET("1/classes/UpDownResult")
     Call<JsonObject> getUpDownResult(@Query("where") String where);
 
-
-
     /**
      * 提交订单
      *
@@ -82,7 +90,6 @@ public interface APICollections {
      */
     @POST("1/classes/UpDownResult")
     Call<JsonObject> submitUpDownResult(@Body UpDownResult bean);
-
 
     /**
      * 获取服务器时间
