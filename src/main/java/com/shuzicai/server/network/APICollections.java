@@ -4,7 +4,9 @@ package com.shuzicai.server.network;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.shuzicai.server.entry.GameInfo;
+import com.shuzicai.server.entry.HuShenIndex;
 import com.shuzicai.server.entry.LondonGold;
+import com.shuzicai.server.entry.StockIndex;
 import com.shuzicai.server.entry.UpDownResult;
 
 import java.util.List;
@@ -33,7 +35,7 @@ public interface APICollections {
 
 
     /**
-     * 获取伦敦金游戏记录信息
+     * 获取游戏记录信息
      *
      * @param objectId
      * @return
@@ -41,8 +43,27 @@ public interface APICollections {
     @GET("1/classes/GameInfo/{objectId}")
     Call<JsonObject> getGameInfo(@Path("objectId") String objectId);
 
+
     /**
-     * 提交伦敦金信息
+     * 提交股票信息
+     *
+     * @param bean
+     * @return
+     */
+    @POST("1/classes/StockIndex")
+    Call<JsonObject> submitStockIndex(@Body StockIndex bean);
+
+    /**
+     * 提交股票信息
+     *
+     * @param bean
+     * @return
+     */
+    @POST("1/classes/HuShenIndex")
+    Call<JsonObject> submitHuShenIndex(@Body HuShenIndex bean);
+
+    /**
+     * 添加伦敦金信息
      *
      * @param bean
      * @return
@@ -52,7 +73,7 @@ public interface APICollections {
 
 
     /**
-     * 修改用户信息
+     * 修改游戏期数信息
      *
      * @param objectID
      * @param bean
@@ -62,25 +83,6 @@ public interface APICollections {
     Call<JsonObject> updateGameInfo(@Path("objectID") String objectID,
                                     @Body GameInfo bean);
 
-    /**
-     * 获取商品信息
-     *
-     * @param limit
-     * @param skip
-     * @return
-     */
-    @GET("1/classes/Goods")
-    Call<JsonObject> getGoods(@Query("limit") int limit,
-                              @Query("skip") int skip);
-
-    /**
-     * 获取游戏结果值
-     *
-     * @param where
-     * @return
-     */
-    @GET("1/classes/UpDownResult")
-    Call<JsonObject> getUpDownResult(@Query("where") String where);
 
     /**
      * 提交订单

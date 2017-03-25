@@ -4,7 +4,7 @@ package com.shuzicai.server.entry;
  * Created by Nicky on 2017/3/25.
  */
 public class LondonGold {
-    private int periodsNum;//最新期数
+    private int periodsNum;//期数
     private String type;// 黄金美元
     private String price;// 1243.80
     private String changepercent;// -0.15%

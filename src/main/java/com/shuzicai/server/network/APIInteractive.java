@@ -4,8 +4,9 @@ package com.shuzicai.server.network;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.shuzicai.server.entry.GameInfo;
+import com.shuzicai.server.entry.HuShenIndex;
 import com.shuzicai.server.entry.LondonGold;
-import com.shuzicai.server.entry.UpDownResult;
+import com.shuzicai.server.entry.StockIndex;
 
 import java.util.List;
 import java.util.Map;
@@ -76,7 +77,7 @@ public class APIInteractive {
     }
 
     /**
-     * 提交股票信息
+     * 提交伦敦金信息
      *
      * @param indexData
      * @param callback
@@ -91,31 +92,30 @@ public class APIInteractive {
 
 
     /**
-     * 获取商品信息
+     * 提交股票信息
      *
-     * @param limit
-     * @param skip
+     * @param indexData
      * @param callback
      */
-    public static void getGoods(int limit, int skip, final INetworkResponse callback) {
+    public static void submitStockIndexData(StockIndex indexData, final INetworkResponse callback) {
         if (null == request) {
             initRetrofit();
         }
-        Call<JsonObject> call = request.getGoods(limit, skip);
+        Call<JsonObject> call = request.submitStockIndex(indexData);
         NetworkRequest.netRequest(call, callback);
     }
 
     /**
-     * 提交最新的涨跌情况
+     * 提交沪深300 情况
      *
-     * @param order
+     * @param index
      * @param callback
      */
-    public static void submitUpDownResult(UpDownResult order, final INetworkResponse callback) {
+    public static void submitHuShenIndex(HuShenIndex index, final INetworkResponse callback) {
         if (null == request) {
             initRetrofit();
         }
-        Call<JsonObject> call = request.submitUpDownResult(order);
+        Call<JsonObject> call = request.submitHuShenIndex(index);
         NetworkRequest.netRequest(call, callback);
     }
 

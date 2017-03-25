@@ -1,7 +1,5 @@
 package com.shuzicai.server;
 
-import com.shuzicai.server.entry.StockIndex;
-
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -14,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by Nicky on 2017/2/19.
+ * l
  */
 public class MainServlet extends HttpServlet {
     //日之类
@@ -48,7 +47,8 @@ public class MainServlet extends HttpServlet {
             public void run() {
                 //getGameInfo();
                 StockIndexService.getStockIndexDate();
-                LondonGoldService.getLondonGoldValue();
+                GameIndexService.getStockIndexDate();
+                GameLondonService.getLondonGoldValue();
             }
         };
         Thread thread = new Thread(runnable);

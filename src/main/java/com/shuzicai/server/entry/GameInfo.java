@@ -7,9 +7,7 @@ package com.shuzicai.server.entry;
 public class GameInfo {
 
     //objectId
-    public final static String objectId_zhangdie = "vnGeVVVb";
-    public final static String objectId_weishu = "L4PV5556";
-    public final static String objectId_quanshu = "J5IpAAAE";
+    public final static String objectId_hushen = "vnGeVVVb";
     public final static String objectId_london = "YztiGGGg";
     //类型
     public final static int type_zhangdie = 0;

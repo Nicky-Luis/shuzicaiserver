@@ -1,10 +1,12 @@
 package com.shuzicai.server.entry;
 
 /**
- * Created by Nicky on 2017/2/21.
+ * Created by Nicky on 2017/3/25.
  */
-public class StockIndex {
+public class HuShenIndex {
 
+    //最新期数
+    private int periodsNum;
     //昨日关盘日期
     private String yestodayClosePrice;
     private String todayMax;
@@ -32,13 +34,14 @@ public class StockIndex {
     private String minPrice;
 
 
-    public StockIndex() {
+    public HuShenIndex() {
     }
 
-    public StockIndex( String yestodayClosePrice, String todayMax, String todayMin, String max52,
+    public HuShenIndex(int periodsNum, String yestodayClosePrice, String todayMax, String todayMin, String max52,
                       String diff_money, String tradeNum, String code, String maxPrice, String nowPrice, String
                               min52, String time, String name, String tradeAmount, String swing, String
                               todayOpenPrice, String diff_rate, String minPrice) {
+        this.periodsNum = periodsNum;
         this.yestodayClosePrice = yestodayClosePrice;
         this.todayMax = todayMax;
         this.todayMin = todayMin;
@@ -58,6 +61,9 @@ public class StockIndex {
         this.minPrice = minPrice;
     }
 
+    public int getPeriodsNum() {
+        return periodsNum;
+    }
 
     public String getYestodayClosePrice() {
         return yestodayClosePrice;
@@ -127,6 +133,9 @@ public class StockIndex {
         return minPrice;
     }
 
+    public void setPeriodsNum(int periodsNum) {
+        this.periodsNum = periodsNum;
+    }
 
     public void setYestodayClosePrice(String yestodayClosePrice) {
         this.yestodayClosePrice = yestodayClosePrice;
@@ -195,4 +204,5 @@ public class StockIndex {
     public void setMinPrice(String minPrice) {
         this.minPrice = minPrice;
     }
+
 }

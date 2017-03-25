@@ -21,9 +21,9 @@ import static com.shuzicai.server.GlobalConstants.*;
  * Created by Nicky on 2017/3/25.
  * l
  */
-public class LondonGoldService {
+public class GameLondonService {
     //日志类
-    private static Logger logger = Logger.getLogger(LondonGoldService.class);
+    private static Logger logger = Logger.getLogger(GameLondonService.class);
 
     //获取伦敦金数据
     public static void getLondonGoldValue() {
@@ -58,7 +58,7 @@ public class LondonGoldService {
         Gson gson = new Gson();
         LondonGold londonGold = gson.fromJson(goldResult, LondonGold.class);
         if (null != londonGold) {
-            getGameInfo(londonGold, GameInfo.type_london);
+            getGameInfo(londonGold);
         } else {
             logger.error("获取伦敦金指数失败");
         }
@@ -67,9 +67,9 @@ public class LondonGoldService {
     /**
      * 获取游戏信息
      *
-     * @param type
+     * @param londonGold
      */
-    private static void getGameInfo(final LondonGold londonGold, int type) {
+    private static void getGameInfo(final LondonGold londonGold) {
         logger.info("----------开始获取游戏信息-----------");
         APIInteractive.getGameInfo(GameInfo.objectId_london, new INetworkResponse() {
             public void onFailure(int code) {
