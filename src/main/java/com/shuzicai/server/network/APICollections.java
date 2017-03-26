@@ -4,10 +4,12 @@ package com.shuzicai.server.network;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.shuzicai.server.entry.GameInfo;
+import com.shuzicai.server.entry.GuessForecastRecord;
+import com.shuzicai.server.entry.GuessMantissaRecord;
+import com.shuzicai.server.entry.GuessWholeRecord;
 import com.shuzicai.server.entry.HuShenIndex;
 import com.shuzicai.server.entry.LondonGold;
 import com.shuzicai.server.entry.StockIndex;
-import com.shuzicai.server.entry.UpDownResult;
 
 import java.util.List;
 import java.util.Map;
@@ -63,6 +65,15 @@ public interface APICollections {
     Call<JsonObject> submitHuShenIndex(@Body HuShenIndex bean);
 
     /**
+     * 获取最新的股票信息
+     *
+     * @param where
+     * @return
+     */
+    @GET("1/classes/HuShenIndex")
+    Call<JsonObject> getHuShenIndex(@Query("where") String where);
+
+    /**
      * 添加伦敦金信息
      *
      * @param bean
@@ -70,6 +81,15 @@ public interface APICollections {
      */
     @POST("1/classes/LondonGold")
     Call<JsonObject> submitLondonGold(@Body LondonGold bean);
+
+    /**
+     * 添加伦敦金信息
+     *
+     * @param where
+     * @return
+     */
+    @GET("1/classes/LondonGold")
+    Call<JsonObject> getLondonGold(@Query("where") String where);
 
 
     /**
@@ -85,13 +105,43 @@ public interface APICollections {
 
 
     /**
-     * 提交订单
+     * 更新涨跌预测的结果
      *
      * @param bean
      * @return
      */
-    @POST("1/classes/UpDownResult")
-    Call<JsonObject> submitUpDownResult(@Body UpDownResult bean);
+    @PUT("1/classes/GuessForecastRecord/{objectID}")
+    Call<JsonObject> updateGuessForecastRecord(@Path("objectID") String objectID,
+                                               @Body GuessForecastRecord bean);
+
+    /**
+     * 查询涨跌预测的情况
+     *
+     * @param where
+     * @return
+     */
+    @GET("1/classes/GuessForecastRecord")
+    Call<JsonObject> getGuessForecastRecordInfo(@Query("where") String where);
+
+    /**
+     * 更新尾数预测的结果
+     *
+     * @param bean
+     * @return
+     */
+    @PUT("1/classes/GuessMantissaRecord/{objectID}")
+    Call<JsonObject> updateGuessMantissaRecord(@Path("objectID") String objectID,
+                                               @Body GuessMantissaRecord bean);
+
+    /**
+     * 更新全数预测的结果
+     *
+     * @param bean
+     * @return
+     */
+    @PUT("1/classes/GuessWholeRecord/{objectID}")
+    Call<JsonObject> updateGuessWholeRecord(@Path("objectID") String objectID,
+                                            @Body GuessWholeRecord bean);
 
     /**
      * 获取服务器时间
@@ -111,12 +161,4 @@ public interface APICollections {
     @POST("1/batch")
     Call<JsonArray> bmobBatch(@Body Map<String, List> bean);
 
-    /**
-     * 查询用户信息
-     *
-     * @param where
-     * @return
-     */
-    @GET("1/classes/_User")
-    Call<JsonObject> getUserInfo(@Query("where") String where);
 }

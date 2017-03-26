@@ -1,6 +1,7 @@
-package com.shuzicai.server;
+package com.shuzicai.server.service;
 
 import com.google.gson.Gson;
+import com.shuzicai.server.GlobalConstants;
 import com.shuzicai.server.entry.GameInfo;
 import com.shuzicai.server.entry.LondonGold;
 import com.shuzicai.server.network.APIInteractive;
@@ -15,8 +16,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.shuzicai.server.GlobalConstants.*;
-
 /**
  * Created by Nicky on 2017/3/25.
  * l
@@ -28,11 +27,11 @@ public class GameLondonService {
     //获取伦敦金数据
     public static void getLondonGoldValue() {
         Map<String, String> headers = new HashMap<String, String>();
-        headers.put("Authorization", APP_CODE);
+        headers.put("Authorization", GlobalConstants.APP_CODE);
         Map<String, String> querys = new HashMap<String, String>();
 
         try {
-            HttpResponse response = HttpUtils.doGet(London_Host, London_Path, method,
+            HttpResponse response = HttpUtils.doGet(GlobalConstants.London_Host, GlobalConstants.London_Path, GlobalConstants.method,
                     headers, querys);
             System.out.println(response.toString());
             //获取response的body

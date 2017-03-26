@@ -3,6 +3,7 @@ package com.shuzicai.server.network;
 import com.google.gson.Gson;
 import com.shuzicai.server.network.entity.BmobPointer;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -232,15 +233,17 @@ public class BmobQueryUtils {
      * @param values
      * @return
      */
-    public String Include(List<String> values) {
-        Map<String, List<String>> map = new HashMap<String, List<String>>();
-        map.put("$in",values);
-        Gson gson = new Gson();
-        String str = gson.toJson(map);
+    public String Include(Integer[] values) {
+        JSONArray var4 = new JSONArray();
+        for (int index : values) {
+            var4.put(index);
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("$in", var4);
 
         JSONObject resultObject = new JSONObject();
         try {
-            resultObject.put(this.kayValue, str);
+            resultObject.put(this.kayValue, jsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -343,17 +346,18 @@ public class BmobQueryUtils {
 
     /**
      * 与
+     *
      * @param where1
      * @param where2
      * @return
      */
-    public String and(String where1,String where2) {
-        List<String> list =new ArrayList<String>();
+    public String and(String where1, String where2) {
+        List<String> list = new ArrayList<String>();
         list.add(where1);
         list.add(where2);
 
-        Map<String, List<String>> map = new HashMap<String,List<String>>();
-        map.put("$and",list);
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
+        map.put("$and", list);
         Gson gson = new Gson();
         String str = gson.toJson(map);
         return str;

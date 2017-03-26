@@ -1,4 +1,4 @@
-package com.shuzicai.server;
+package com.shuzicai.server.service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

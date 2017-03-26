@@ -4,6 +4,9 @@ package com.shuzicai.server.network;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.shuzicai.server.entry.GameInfo;
+import com.shuzicai.server.entry.GuessForecastRecord;
+import com.shuzicai.server.entry.GuessMantissaRecord;
+import com.shuzicai.server.entry.GuessWholeRecord;
 import com.shuzicai.server.entry.HuShenIndex;
 import com.shuzicai.server.entry.LondonGold;
 import com.shuzicai.server.entry.StockIndex;
@@ -90,6 +93,19 @@ public class APIInteractive {
         NetworkRequest.netRequest(call, callback);
     }
 
+    /**
+     * 提交伦敦金信息
+     *
+     * @param where
+     * @param callback
+     */
+    public static void getLondonGoldData(String where, final INetworkResponse callback) {
+        if (null == request) {
+            initRetrofit();
+        }
+        Call<JsonObject> call = request.getLondonGold(where);
+        NetworkRequest.netRequest(call, callback);
+    }
 
     /**
      * 提交股票信息
@@ -119,6 +135,81 @@ public class APIInteractive {
         NetworkRequest.netRequest(call, callback);
     }
 
+    /**
+     * 获取最新的沪深300 情况
+     *
+     * @param index
+     * @param callback
+     */
+    public static void getHuShenIndex(String where, final INetworkResponse callback) {
+        if (null == request) {
+            initRetrofit();
+        }
+        Call<JsonObject> call = request.getHuShenIndex(where);
+        NetworkRequest.netRequest(call, callback);
+    }
+
+    /**
+     * 获取涨跌预测的信息
+     *
+     * @param where
+     * @param callback
+     */
+    public static void getGuessForecastRecordInfo(String where, final INetworkResponse callback) {
+        if (null == request) {
+            initRetrofit();
+        }
+        Call<JsonObject> call = request.getGuessForecastRecordInfo(where);
+        NetworkRequest.netRequest(call, callback);
+    }
+
+    /**
+     * 更新涨跌预测的结果
+     *
+     * @param objectId
+     * @param forecastRecord
+     * @param callback
+     */
+    public static void updateGuessForecastRecord(String objectId, GuessForecastRecord forecastRecord,
+                                                 final INetworkResponse callback) {
+        if (null == request) {
+            initRetrofit();
+        }
+        Call<JsonObject> call = request.updateGuessForecastRecord(objectId, forecastRecord);
+        NetworkRequest.netRequest(call, callback);
+    }
+
+    /**
+     * 更新尾数预测的结果
+     *
+     * @param objectId
+     * @param mantissaRecord
+     * @param callback
+     */
+    public static void updateGuessMantissaRecord(String objectId, GuessMantissaRecord mantissaRecord,
+                                                 final INetworkResponse callback) {
+        if (null == request) {
+            initRetrofit();
+        }
+        Call<JsonObject> call = request.updateGuessMantissaRecord(objectId, mantissaRecord);
+        NetworkRequest.netRequest(call, callback);
+    }
+
+    /**
+     * 更新全数预测的结果
+     *
+     * @param objectId
+     * @param wholeRecord
+     * @param callback
+     */
+    public static void updateGuessWholeRecord(String objectId, GuessWholeRecord wholeRecord,
+                                              final INetworkResponse callback) {
+        if (null == request) {
+            initRetrofit();
+        }
+        Call<JsonObject> call = request.updateGuessWholeRecord(objectId, wholeRecord);
+        NetworkRequest.netRequest(call, callback);
+    }
 
     /**
      * 获取服务器时间
@@ -146,21 +237,6 @@ public class APIInteractive {
         }
         Call<JsonArray> call = request.bmobBatch(bean);
         NetworkRequest.netRequest2(call, callback);
-    }
-
-
-    /**
-     * 获取用户信息
-     *
-     * @param where
-     * @param callback
-     */
-    public static void getUserInfo(String where, final INetworkResponse callback) {
-        if (null == request) {
-            initRetrofit();
-        }
-        Call<JsonObject> call = request.getUserInfo(where);
-        NetworkRequest.netRequest(call, callback);
     }
 
 }

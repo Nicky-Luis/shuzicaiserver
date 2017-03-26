@@ -1,7 +1,8 @@
-package com.shuzicai.server;
+package com.shuzicai.server.service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.shuzicai.server.GlobalConstants;
 import com.shuzicai.server.entry.GameInfo;
 import com.shuzicai.server.entry.HuShenIndex;
 import com.shuzicai.server.network.APIInteractive;
@@ -19,11 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.shuzicai.server.GlobalConstants.APP_CODE;
-import static com.shuzicai.server.GlobalConstants.Index_Host;
-import static com.shuzicai.server.GlobalConstants.Index_Path;
-import static com.shuzicai.server.GlobalConstants.method;
-
 /**
  * Created by Nicky on 2017/3/25.
  * .
@@ -38,7 +34,7 @@ public class GameIndexService {
     //获取股票信息
     public static void getStockIndexDate() {
         Map<String, String> headers = new HashMap<String, String>();
-        headers.put("Authorization", APP_CODE);
+        headers.put("Authorization", GlobalConstants.APP_CODE);
         Map<String, String> querys = new HashMap<String, String>();
         querys.put("stocks", stocks);
         //querys.put("needIndex", "1");
@@ -46,7 +42,7 @@ public class GameIndexService {
 
         logger.info("--------开始执行任务--------");
         try {
-            HttpResponse response = HttpUtils.doGet(Index_Host, Index_Path, method,
+            HttpResponse response = HttpUtils.doGet(GlobalConstants.Index_Host, GlobalConstants.Index_Path, GlobalConstants.method,
                     headers, querys);
             System.out.println(response.toString());
             //获取response的body

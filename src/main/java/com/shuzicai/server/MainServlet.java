@@ -1,5 +1,7 @@
 package com.shuzicai.server;
 
+import com.shuzicai.server.service.GuessForecastService;
+
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -46,9 +48,10 @@ public class MainServlet extends HttpServlet {
         Runnable runnable = new Runnable() {
             public void run() {
                 //getGameInfo();
-                StockIndexService.getStockIndexDate();
-                GameIndexService.getStockIndexDate();
-                GameLondonService.getLondonGoldValue();
+                GuessForecastService.startForecastHandler();
+               // StockIndexService.getStockIndexDate();
+                //GameIndexService.getStockIndexDate();
+                //GameLondonService.getLondonGoldValue();
             }
         };
         Thread thread = new Thread(runnable);
