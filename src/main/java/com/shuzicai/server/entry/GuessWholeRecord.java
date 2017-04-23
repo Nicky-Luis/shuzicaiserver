@@ -23,9 +23,13 @@ public class GuessWholeRecord {
     private boolean isReward;
     //获取的奖励数量
     private float rewardCount;
+    //奖励是否已经同步：0：未同步，1：已经同步
+    private int rewardFlag;
+    //预测是否已经处理：0：未处理，1：已经处理
+    private int handlerFlag;
 
     public GuessWholeRecord(String objectId, String userId, float goldValue, int periodNum, float guessValue, float
-            indexResult, boolean isReward, float rewardCount) {
+            indexResult, boolean isReward, float rewardCount, int rewardFlag, int handlerFlag) {
         this.objectId = objectId;
         this.userId = userId;
         this.goldValue = goldValue;
@@ -34,9 +38,12 @@ public class GuessWholeRecord {
         this.indexResult = indexResult;
         this.isReward = isReward;
         this.rewardCount = rewardCount;
+        this.rewardFlag = rewardFlag;
+        this.handlerFlag = handlerFlag;
     }
 
-    public GuessWholeRecord() {
+    public String getObjectId() {
+        return objectId;
     }
 
     public String getUserId() {
@@ -67,6 +74,18 @@ public class GuessWholeRecord {
         return rewardCount;
     }
 
+    public int getRewardFlag() {
+        return rewardFlag;
+    }
+
+    public int getHandlerFlag() {
+        return handlerFlag;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
+    }
+
     public void setUserId(String userId) {
         this.userId = userId;
     }
@@ -93,5 +112,13 @@ public class GuessWholeRecord {
 
     public void setRewardCount(float rewardCount) {
         this.rewardCount = rewardCount;
+    }
+
+    public void setRewardFlag(int rewardFlag) {
+        this.rewardFlag = rewardFlag;
+    }
+
+    public void setHandlerFlag(int handlerFlag) {
+        this.handlerFlag = handlerFlag;
     }
 }

@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  * Created by Nicky on 2017/3/25.
- * l
+ * 伦敦金数据信息处理
  */
 public class GameLondonService {
     //日志类
@@ -31,7 +31,8 @@ public class GameLondonService {
         Map<String, String> querys = new HashMap<String, String>();
 
         try {
-            HttpResponse response = HttpUtils.doGet(GlobalConstants.London_Host, GlobalConstants.London_Path, GlobalConstants.method,
+            HttpResponse response = HttpUtils.doGet(GlobalConstants.London_Host, GlobalConstants.London_Path,
+                    GlobalConstants.method,
                     headers, querys);
             System.out.println(response.toString());
             //获取response的body
@@ -64,7 +65,7 @@ public class GameLondonService {
     }
 
     /**
-     * 获取游戏信息
+     * 获取游戏期数信息
      *
      * @param londonGold
      */

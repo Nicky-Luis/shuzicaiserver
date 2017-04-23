@@ -10,15 +10,35 @@
         <welcome-file>/page/index.jsp</welcome-file>
     </welcome-file-list>
 
+    <!--主servlet类-->
     <servlet>
-        <servlet-name>HelloServlet</servlet-name>
+        <servlet-name>MainServlet</servlet-name>
         <servlet-class>com.shuzicai.server.MainServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>HelloServlet</servlet-name>
-        <url-pattern>/servlet/HelloServlet</url-pattern>
+        <servlet-name>MainServlet</servlet-name>
+        <url-pattern>/main</url-pattern>
     </servlet-mapping>
 
+    <!-- 系统初始化配置信息  servlet -->
+    <servlet>
+        <servlet-name>log4jInit</servlet-name>
+        <servlet-class>com.shuzicai.server.Log4jInitServlet</servlet-class>
+        <init-param>
+            <param-name>Log4jFile</param-name>
+            <param-value>/WEB-INF/config/log4j.properties</param-value>
+        </init-param>
+        <init-param>
+            <param-name>Log4jFileSavePath</param-name>
+            <param-value>/logs</param-value>
+        </init-param>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>log4jInit</servlet-name>
+        <url-pattern>/log4j</url-pattern>
+    </servlet-mapping>
 </web-app>

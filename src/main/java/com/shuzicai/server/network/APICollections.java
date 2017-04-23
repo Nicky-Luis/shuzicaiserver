@@ -134,6 +134,15 @@ public interface APICollections {
                                                @Body GuessMantissaRecord bean);
 
     /**
+     * 查询涨跌预测的情况
+     *
+     * @param where
+     * @return
+     */
+    @GET("1/classes/GuessMantissaRecord")
+    Call<JsonObject> getGuessMantissaRecordInfo(@Query("where") String where);
+
+    /**
      * 更新全数预测的结果
      *
      * @param bean
@@ -142,6 +151,15 @@ public interface APICollections {
     @PUT("1/classes/GuessWholeRecord/{objectID}")
     Call<JsonObject> updateGuessWholeRecord(@Path("objectID") String objectID,
                                             @Body GuessWholeRecord bean);
+
+    /**
+     * 查询全数预测的信息
+     *
+     * @param where
+     * @return
+     */
+    @GET("1/classes/GuessWholeRecord")
+    Call<JsonObject> getGuessWholeRecord(@Query("where") String where);
 
     /**
      * 获取服务器时间

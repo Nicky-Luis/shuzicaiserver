@@ -22,13 +22,13 @@ import java.util.Map;
 
 /**
  * Created by Nicky on 2017/3/25.
- * .
+ * 作为游戏的沪深300数据处理
  */
 public class GameIndexService {
 
     //日志类
     private static Logger logger = Logger.getLogger(GameIndexService.class);
-    //股票数据
+    //沪深300股票数据
     private final static String stocks = "sz399300";
 
     //获取股票信息
@@ -42,7 +42,8 @@ public class GameIndexService {
 
         logger.info("--------开始执行任务--------");
         try {
-            HttpResponse response = HttpUtils.doGet(GlobalConstants.Index_Host, GlobalConstants.Index_Path, GlobalConstants.method,
+            HttpResponse response = HttpUtils.doGet(GlobalConstants.Index_Host, GlobalConstants.Index_Path,
+                    GlobalConstants.method,
                     headers, querys);
             System.out.println(response.toString());
             //获取response的body
@@ -71,7 +72,7 @@ public class GameIndexService {
             }.getType();
             List<HuShenIndex> stockIndices = gson.fromJson(bodyArrays.toString(), listType);
             //解析并进行上传
-            for (HuShenIndex indices:stockIndices) {
+            for (HuShenIndex indices : stockIndices) {
                 //沪深300则更新期数
                 if (indices.getCode().equals("sz399300")) {
                     getGameInfo(indices);
@@ -115,7 +116,7 @@ public class GameIndexService {
     }
 
     /***
-     * 更新伦敦金信息
+     * 更新沪深300数据信息
      * @param stockIndex
      */
     private static void updateStockIndexInfo(HuShenIndex stockIndex) {
@@ -131,7 +132,7 @@ public class GameIndexService {
         });
     }
 
-    //更新游戏信息
+    //更新游戏期数信息
     private static void updateGameInfo(String objectID, GameInfo gameInfo) {
         logger.info("----------开始更新沪深300游戏期数信息-----------");
         APIInteractive.updateGameInfo(objectID, gameInfo, new INetworkResponse() {

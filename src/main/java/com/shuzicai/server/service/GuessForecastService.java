@@ -50,6 +50,7 @@ public class GuessForecastService {
                 try {
                     GameInfo gameInfo = new Gson().fromJson(result.toString(), GameInfo.class);
                     if (null != gameInfo) {
+                        //本期的期数
                         int num = gameInfo.getNewestNum() - 1;
                         startGetHuShenInfo(num);
                     }
@@ -109,8 +110,8 @@ public class GuessForecastService {
                                       final float currentPrice, final float lastPrice) {
         logger.info("-------开始更新结果-------");
         List<BmobBatch> batches = new ArrayList<BmobBatch>();
-        float rewardSum = 0;
-        float loserSum = 0;
+        float rewardSum = 0;//赢钱总和
+        float loserSum = 0;//输钱总额
         for (GuessForecastRecord forecastRecord : forecastRecords) {
             int betResult = lastPrice > currentPrice ? 1 : 0;
             int betStatus = (betResult == forecastRecord.getBetValue()) ? 1 : 0;
@@ -135,6 +136,7 @@ public class GuessForecastService {
             bodyMap.put("betResult", betResult);
             bodyMap.put("betStatus", betStatus);
             bodyMap.put("rewardValue", rewardValue);
+            bodyMap.put("rewardFlag",0);
 
             String path = "/1/classes/GuessForecastRecord/" + forecastRecord.getObjectId();
             BmobBatch goldRecordBatch = new BmobBatch("PUT", path, bodyMap);
@@ -172,7 +174,7 @@ public class GuessForecastService {
     }
 
     /**
-     * 获取最新的沪深300 信息
+     * 获取最新的沪深300信息与上次的沪深指数信息
      *
      * @param periodNum
      */

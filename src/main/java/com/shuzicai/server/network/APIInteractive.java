@@ -138,7 +138,7 @@ public class APIInteractive {
     /**
      * 获取最新的沪深300 情况
      *
-     * @param index
+     * @param where
      * @param callback
      */
     public static void getHuShenIndex(String where, final INetworkResponse callback) {
@@ -164,6 +164,21 @@ public class APIInteractive {
     }
 
     /**
+     * 获取涨跌预测的信息
+     *
+     * @param where
+     * @param callback
+     */
+    public static void getGuessMantissaRecordInfo(String where, final INetworkResponse callback) {
+        if (null == request) {
+            initRetrofit();
+        }
+        Call<JsonObject> call = request.getGuessMantissaRecordInfo(where);
+        NetworkRequest.netRequest(call, callback);
+    }
+
+
+    /**
      * 更新涨跌预测的结果
      *
      * @param objectId
@@ -178,6 +193,21 @@ public class APIInteractive {
         Call<JsonObject> call = request.updateGuessForecastRecord(objectId, forecastRecord);
         NetworkRequest.netRequest(call, callback);
     }
+
+    /**
+     * 获取全数预测的信息
+     *
+     * @param where
+     * @param callback
+     */
+    public static void getGuessWholeRecordInfo(String where, final INetworkResponse callback) {
+        if (null == request) {
+            initRetrofit();
+        }
+        Call<JsonObject> call = request.getGuessWholeRecord(where);
+        NetworkRequest.netRequest(call, callback);
+    }
+
 
     /**
      * 更新尾数预测的结果

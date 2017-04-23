@@ -27,6 +27,10 @@ public class GuessForecastRecord {
     private float indexResult;
     //获取的奖励数量
     private float rewardValue;
+    //奖励是否已经同步：0：未同步，1：已经同步
+    private int rewardFlag;
+    //预测是否已经处理：0：未处理，1：已经处理
+    private int handlerFlag;
 
     public GuessForecastRecord(String objectId, String userId, float betSilverValue, int betValue, int periodNum, int
             betStatus, int betResult, float indexResult, float rewardValue) {
@@ -40,7 +44,6 @@ public class GuessForecastRecord {
         this.indexResult = indexResult;
         this.rewardValue = rewardValue;
     }
-
 
     public String getObjectId() {
         return objectId;
@@ -78,6 +81,13 @@ public class GuessForecastRecord {
         return rewardValue;
     }
 
+    public int getRewardFlag() {
+        return rewardFlag;
+    }
+
+    public int getHandlerFlag() {
+        return handlerFlag;
+    }
 
     public void setObjectId(String objectId) {
         this.objectId = objectId;
@@ -113,5 +123,13 @@ public class GuessForecastRecord {
 
     public void setRewardValue(float rewardValue) {
         this.rewardValue = rewardValue;
+    }
+
+    public void setRewardFlag(int rewardFlag) {
+        this.rewardFlag = rewardFlag;
+    }
+
+    public void setHandlerFlag(int handlerFlag) {
+        this.handlerFlag = handlerFlag;
     }
 }

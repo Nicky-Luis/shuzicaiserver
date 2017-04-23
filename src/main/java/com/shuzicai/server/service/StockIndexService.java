@@ -25,7 +25,7 @@ import static com.shuzicai.server.GlobalConstants.method;
 
 /**
  * Created by Nicky on 2017/3/25.
- * .
+ * 作为显示的四个指数信息处理
  */
 public class StockIndexService {
 
@@ -71,8 +71,8 @@ public class StockIndexService {
             }.getType();
             List<StockIndex> stockIndices = gson.fromJson(bodyArrays.toString(), listType);
             //解析并进行上传
-            for (StockIndex indices:stockIndices) {
-                    updateStockIndexInfo(indices);
+            for (StockIndex indices : stockIndices) {
+                updateStockIndexInfo(indices);
             }
         } else {
             logger.error("获取股票信息失败");

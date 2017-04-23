@@ -6,10 +6,11 @@ package com.shuzicai.server.entry;
  */
 
 public class GuessMantissaRecord {
+
     //游戏类型
-    public final static int Guess_Type_Percentile = 0;
-    public final static int Guess_Type_DoubleDirect = 1;
-    public final static int Guess_Type_DoubleGroup = 2;
+    public final static int Guess_Type_Percentile = 0;//百分位直选
+    public final static int Guess_Type_DoubleDirect = 1;//双数直选
+    public final static int Guess_Type_DoubleGroup = 2;//双数组选
     //指数类型
     public final static int Index_Type_Hushen = 0;
     public final static int Index_Type_Gold = 1;
@@ -21,21 +22,24 @@ public class GuessMantissaRecord {
     private float goldValue;
     //类型
     private int guessType;
-    //指数类型
+    //指数类型,黄金或者沪深300
     private int indexType;
     //押注期数
     private int periodNum;
     //押注的数据
-    private float guessValue;
+    private int guessValue;
     //实际的指数
     private float indexResult;
     //是否中奖
     private boolean isReward;
     //获取的奖励数量
     private float rewardCount;
+    //奖励是否已经同步：0：未同步，1：已经同步
+    private int rewardFlag;
+    //预测是否已经处理：0：未处理，1：已经处理
+    private int handlerFlag;
 
-    public GuessMantissaRecord(String objectId, String userId, float goldValue, int guessType, int indexType, int
-            periodNum, float guessValue, float indexResult, boolean isReward, float rewardCount) {
+    public GuessMantissaRecord(String objectId, String userId, float goldValue, int guessType, int indexType, int periodNum, int guessValue, float indexResult, boolean isReward, float rewardCount, int rewardFlag, int handlerFlag) {
         this.objectId = objectId;
         this.userId = userId;
         this.goldValue = goldValue;
@@ -46,9 +50,12 @@ public class GuessMantissaRecord {
         this.indexResult = indexResult;
         this.isReward = isReward;
         this.rewardCount = rewardCount;
+        this.rewardFlag = rewardFlag;
+        this.handlerFlag = handlerFlag;
     }
 
-    public GuessMantissaRecord() {
+    public String getObjectId() {
+        return objectId;
     }
 
     public String getUserId() {
@@ -58,7 +65,6 @@ public class GuessMantissaRecord {
     public float getGoldValue() {
         return goldValue;
     }
-
 
     public int getGuessType() {
         return guessType;
@@ -72,7 +78,7 @@ public class GuessMantissaRecord {
         return periodNum;
     }
 
-    public float getGuessValue() {
+    public int getGuessValue() {
         return guessValue;
     }
 
@@ -86,6 +92,18 @@ public class GuessMantissaRecord {
 
     public float getRewardCount() {
         return rewardCount;
+    }
+
+    public int getRewardFlag() {
+        return rewardFlag;
+    }
+
+    public int getHandlerFlag() {
+        return handlerFlag;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
     }
 
     public void setUserId(String userId) {
@@ -108,7 +126,7 @@ public class GuessMantissaRecord {
         this.periodNum = periodNum;
     }
 
-    public void setGuessValue(float guessValue) {
+    public void setGuessValue(int guessValue) {
         this.guessValue = guessValue;
     }
 
@@ -122,5 +140,13 @@ public class GuessMantissaRecord {
 
     public void setRewardCount(float rewardCount) {
         this.rewardCount = rewardCount;
+    }
+
+    public void setRewardFlag(int rewardFlag) {
+        this.rewardFlag = rewardFlag;
+    }
+
+    public void setHandlerFlag(int handlerFlag) {
+        this.handlerFlag = handlerFlag;
     }
 }

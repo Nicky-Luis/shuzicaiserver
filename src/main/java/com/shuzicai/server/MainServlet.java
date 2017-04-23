@@ -1,11 +1,13 @@
 package com.shuzicai.server;
 
-import com.shuzicai.server.service.GuessForecastService;
+import com.shuzicai.server.task.QuartzManager;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import java.io.IOException;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -35,27 +37,24 @@ public class MainServlet extends HttpServlet {
         logger.info("---销毁,任务结束---");
     }
 
-    public void init() throws ServletException {
+    public void init(ServletConfig config) throws ServletException {
+        // 初始化日志路径
+        initLog4j(config);
         logger.info("---执行初始化,开始任务---");
-        startTask();
+        QuartzManager.startTask();
     }
 
     /**
-     * 开始任务
+     * 初始化log4j
+     *
+     * @param config
      */
-    private void startTask() {
-        final long timeInterval = 3000;
-        Runnable runnable = new Runnable() {
-            public void run() {
-                //getGameInfo();
-                GuessForecastService.startForecastHandler();
-               // StockIndexService.getStockIndexDate();
-                //GameIndexService.getStockIndexDate();
-                //GameLondonService.getLondonGoldValue();
-            }
-        };
-        Thread thread = new Thread(runnable);
-        thread.start();
+    private void initLog4j(ServletConfig config) {
+        String root = config.getServletContext().getRealPath("/");
+        String log4jLocation = config.getInitParameter("log4jLocation");
+        System.setProperty("webRoot", root);
+        if (null != log4jLocation && !log4jLocation.equals("")) {
+            PropertyConfigurator.configure(root + log4jLocation);
+        }
     }
-
 }

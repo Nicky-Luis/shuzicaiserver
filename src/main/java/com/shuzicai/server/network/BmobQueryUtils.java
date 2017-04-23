@@ -1,6 +1,5 @@
 package com.shuzicai.server.network;
 
-import com.google.gson.Gson;
 import com.shuzicai.server.network.entity.BmobPointer;
 
 import org.json.JSONArray;
@@ -8,12 +7,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Created by Nicky on 2017/1/16.
@@ -351,16 +346,14 @@ public class BmobQueryUtils {
      * @param where2
      * @return
      */
-    public String and(String where1, String where2) {
-        List<String> list = new ArrayList<String>();
-        list.add(where1);
-        list.add(where2);
+    public String and(JSONObject where1, JSONObject where2) {
+        JSONArray jsonArray =new JSONArray();
+        jsonArray.put(where1);
+        jsonArray.put(where2);
 
-        Map<String, List<String>> map = new HashMap<String, List<String>>();
-        map.put("$and", list);
-        Gson gson = new Gson();
-        String str = gson.toJson(map);
-        return str;
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("$and", jsonArray);
+        return jsonObject.toString();
     }
 
     /**
