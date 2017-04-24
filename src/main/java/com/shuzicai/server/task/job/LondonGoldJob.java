@@ -22,9 +22,8 @@ public class LondonGoldJob implements Job {
     private static Logger log = LoggerFactory.getLogger(LondonGoldJob.class);
 
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
-        //作为显示的指数信息处理，每天请求一次就行
+        log.info("========获取伦敦金的数据,每10分钟一次=======");
         GameLondonService.getLondonGoldValue();
-        log.info("========获取伦敦金的数据=======");
         tryToStop();
     }
 
@@ -38,14 +37,14 @@ public class LondonGoldJob implements Job {
         boolean isAM = DateUtils.isInTime("00:00-06:00", currentTime);
         boolean isPM = DateUtils.isInTime("07:00-23:59", currentTime);
         if (!isAM && !isPM) {
-            log.info("不在时间范围之内,开始停止");
+            log.info("\n\n=====伦敦金：不在时间范围之内,开始停止");
             try {
                 GussLondonJob.stopScheduler();
             } catch (SchedulerException e) {
                 e.printStackTrace();
             }
         } else {
-            log.info("在时间范围之内，继续运行..." + currentTime);
+            log.info("\n\n=====伦敦金：在时间范围之内，继续运行..." + currentTime);
         }
     }
 

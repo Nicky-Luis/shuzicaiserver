@@ -25,7 +25,7 @@ public class GussHuShenJob implements Job {
     private static Scheduler mainScheduler1, mainScheduler2, mainScheduler3;
 
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
-        log.info("==========获取股票数据============");
+        log.info("\n==========获取股票数据============\n");
         try {
             if (null == mainScheduler) {
                 //添加股票查询任务,每10分钟一次

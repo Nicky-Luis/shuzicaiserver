@@ -22,8 +22,7 @@ public class GameIndexJob implements Job {
     private static Logger log = LoggerFactory.getLogger(GameIndexJob.class);
 
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
-        log.info("获取股票数据");
-        //作为游戏的伦敦金信息处理，每天10分钟请求一次
+        log.info("\n\n===============获取沪深300游戏信息，每10分钟请求一次================\n");
         GameIndexService.getStockIndexDate();
         tryToStop();
     }

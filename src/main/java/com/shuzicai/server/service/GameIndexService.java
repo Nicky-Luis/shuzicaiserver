@@ -33,6 +33,7 @@ public class GameIndexService {
 
     //获取股票信息
     public static void getStockIndexDate() {
+        logger.info("\n=============开始获取作为游戏信息的沪深300=============\n");
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", GlobalConstants.APP_CODE);
         Map<String, String> querys = new HashMap<String, String>();
@@ -40,7 +41,6 @@ public class GameIndexService {
         //querys.put("needIndex", "1");
         //querys.put("need_k_pic", "1");
 
-        logger.info("--------开始执行任务--------");
         try {
             HttpResponse response = HttpUtils.doGet(GlobalConstants.Index_Host, GlobalConstants.Index_Path,
                     GlobalConstants.method,

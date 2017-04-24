@@ -17,7 +17,7 @@ public class GuessMantissaJob implements Job {
     private static Logger log = LoggerFactory.getLogger(GuessMantissaJob.class);
 
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
-        log.info("========尾数预测处理=====");
+        log.info("\n\n===============开始尾数预测结果处理游戏处理================\n");
         //猜尾数结果处理
         GuessMantissaService.startMantissaHandler();
     }

@@ -47,8 +47,9 @@ public class StockIndexService {
             System.out.println(response.toString());
             //获取response的body
             String jsonResult = EntityUtils.toString(response.getEntity());
-            logger.info("--------返回的股票结果-------");
+            logger.info("\n============返回用于显示的股票数据=============\n");
             logger.info(jsonResult);
+            logger.info("\n开始解析用于显示的股票数据");
             startAnalysisStockIndex(jsonResult);
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,7 +85,7 @@ public class StockIndexService {
      * @param stockIndex
      */
     private static void updateStockIndexInfo(StockIndex stockIndex) {
-        logger.info("----------开始上传股票信息-----------");
+        logger.info("\n==========开始上传股票信息==========\n");
         APIInteractive.submitStockIndexData(stockIndex, new INetworkResponse() {
             public void onFailure(int code) {
                 logger.error("上传伦股票信息失败");

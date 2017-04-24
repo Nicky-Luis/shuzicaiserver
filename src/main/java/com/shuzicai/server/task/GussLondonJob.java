@@ -23,7 +23,7 @@ public class GussLondonJob implements Job {
     private static Scheduler mainScheduler, mainScheduler1;
 
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
-        log.info("=====获取伦敦金数据=====");
+        log.info("\n\n=========获取伦敦金数据==========\n");
         try {
             //伦敦金任务，每10分钟一次
             if (null == mainScheduler) {

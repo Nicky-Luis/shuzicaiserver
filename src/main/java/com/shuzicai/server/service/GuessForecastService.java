@@ -68,15 +68,16 @@ public class GuessForecastService {
      */
     private static void startGetForecastInfo(int periodNum, final float currentPrice,
                                              final float lastPrice) {
+        logger.error("\n两次指数数据为，currentPrice：" + currentPrice + "，lastPrice：" + lastPrice);
         BmobQueryUtils utils = BmobQueryUtils.newInstance();
         final String where = utils.setValue("periodNum").equal(periodNum);
         APIInteractive.getGuessForecastRecordInfo(where, new INetworkResponse() {
             public void onFailure(int code) {
-                logger.error("获取涨跌游戏信息失败：" + code);
+                logger.error("获取涨跌预测信息失败：" + code);
             }
 
             public void onSucceed(JSONObject result) {
-                logger.info("获取涨跌游戏信息成功：" + result);
+                logger.info("获取涨跌预测信息成功：" + result);
                 if (null != result) {
                     JSONArray bodyArrays = result.optJSONArray("results");
                     if (null == bodyArrays) {
@@ -108,7 +109,7 @@ public class GuessForecastService {
      */
     private static void batchesUpdate(List<GuessForecastRecord> forecastRecords,
                                       final float currentPrice, final float lastPrice) {
-        logger.info("-------开始更新结果-------");
+        logger.info("-------开始计算涨跌预测与结果-------");
         List<BmobBatch> batches = new ArrayList<BmobBatch>();
         float rewardSum = 0;//赢钱总和
         float loserSum = 0;//输钱总额
@@ -136,7 +137,7 @@ public class GuessForecastService {
             bodyMap.put("betResult", betResult);
             bodyMap.put("betStatus", betStatus);
             bodyMap.put("rewardValue", rewardValue);
-            bodyMap.put("rewardFlag",0);
+            bodyMap.put("rewardFlag", 0);
 
             String path = "/1/classes/GuessForecastRecord/" + forecastRecord.getObjectId();
             BmobBatch goldRecordBatch = new BmobBatch("PUT", path, bodyMap);
@@ -187,16 +188,20 @@ public class GuessForecastService {
             }
 
             public void onSucceed(JSONObject result) {
-                logger.info("获取沪深信息成功：" + result);
+                logger.info("获取两次沪深信息成功：" + result);
                 JSONArray bodyArrays = result.optJSONArray("results");
                 if (null != bodyArrays) {
                     Gson gson = new Gson();
                     Type listType = new TypeToken<List<HuShenIndex>>() {
                     }.getType();
                     List<HuShenIndex> stockIndices = gson.fromJson(bodyArrays.toString(), listType);
-                    float currentPrice = Float.valueOf(stockIndices.get(0).getNowPrice());
-                    float lastPrice = Float.valueOf(stockIndices.get(1).getNowPrice());
-                    startGetForecastInfo(periodNum, currentPrice, lastPrice);
+                    if (stockIndices.size() >= 2) {
+                        float currentPrice = Float.valueOf(stockIndices.get(0).getNowPrice());
+                        float lastPrice = Float.valueOf(stockIndices.get(1).getNowPrice());
+                        startGetForecastInfo(periodNum, currentPrice, lastPrice);
+                    } else {
+                        logger.info("沪深信息不足两次");
+                    }
                 }
             }
         });

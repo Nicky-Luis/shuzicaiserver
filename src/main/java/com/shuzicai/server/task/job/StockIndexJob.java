@@ -18,7 +18,7 @@ public class StockIndexJob implements Job {
 
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
         //作为显示的指数信息处理，每天请求一次就行
+        log.info("\n============开始获取用于显示的股票数据，每天请求一次===========");
         StockIndexService.getStockIndexDate();
-        log.info("获取股票数据");
     }
 }

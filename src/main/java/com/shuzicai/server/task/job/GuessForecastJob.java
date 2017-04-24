@@ -17,8 +17,7 @@ public class GuessForecastJob implements Job {
     private static Logger log = LoggerFactory.getLogger(GuessForecastJob.class);
 
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
-        //涨跌预测游戏处理
+        log.info("\n\n===============开始涨跌预测游戏处理================\n");
         GuessForecastService.startForecastHandler();
-        log.info("获取股票数据");
     }
 }

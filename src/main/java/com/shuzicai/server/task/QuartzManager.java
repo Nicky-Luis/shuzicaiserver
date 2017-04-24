@@ -43,7 +43,7 @@ public class QuartzManager {
     //  星期一到星期五的7点0分0秒触发任务，伦敦金
     private final static String LondonIndexCronExpression2 = "0 0 7 ? * MON-FRI";
     //测试
-    private final static String TestExpression = "0 10 * * * ?";
+    private final static String TestExpression = "0 35 22 ? * MON-FRI";
 
     //任务组
     private final static String JOB_GROUP_NAME = "QUARTZ_JOBGROUP_NAME";
@@ -54,17 +54,16 @@ public class QuartzManager {
      * 测试
      */
     public static void startTask() {
-        System.out.print("...start task....");
+        log.info("\n=============start task==================\n");
         try {
-            //每一天查一次就行
-            createHuShenScheduler(StockIndexJob.class, StockIndexCronExpression, "index");
+            //每一天查一次就行,用于显示的股票信息
+           createHuShenScheduler(StockIndexJob.class, StockIndexCronExpression, "index");
             //上午的 //下午的
             createHuShenScheduler(GussHuShenJob.class, GameIndexCronExpression1, "hushen1");
             createHuShenScheduler(GussHuShenJob.class, GameIndexCronExpression2, "hushen2");
             //伦敦金
             createHuShenScheduler(GussLondonJob.class, LondonIndexCronExpression1, "london1");
             createHuShenScheduler(GussLondonJob.class, LondonIndexCronExpression2, "london2");
-
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
@@ -140,7 +139,7 @@ public class QuartzManager {
      */
     private static void createHuShenScheduler(Class<? extends Job> jobClass, String ctr, String flag) throws
             SchedulerException {
-        log.info("创建定时器");
+        log.info("\n\n=====创建定时器" + flag + "========\n");
         SchedulerFactory schedulerFactory = new StdSchedulerFactory();
         scheduler = schedulerFactory.getScheduler();
 

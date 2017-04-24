@@ -17,8 +17,7 @@ public class GuessWholeJob implements Job {
     private static Logger log = LoggerFactory.getLogger(GuessWholeJob.class);
 
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
-        //猜全数结果处理
+        log.info("\n\n===============开始全数结果处理游戏处理================\n");
         GuessWholeService.startGuessWholeHandler();
-        log.info("获取股票数据");
     }
 }
