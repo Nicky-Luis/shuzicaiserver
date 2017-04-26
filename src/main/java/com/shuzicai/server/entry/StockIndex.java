@@ -2,6 +2,7 @@ package com.shuzicai.server.entry;
 
 /**
  * Created by Nicky on 2017/2/21.
+ * 用于显示的
  */
 public class StockIndex {
 
@@ -35,7 +36,7 @@ public class StockIndex {
     public StockIndex() {
     }
 
-    public StockIndex( String yestodayClosePrice, String todayMax, String todayMin, String max52,
+    public StockIndex(String yestodayClosePrice, String todayMax, String todayMin, String max52,
                       String diff_money, String tradeNum, String code, String maxPrice, String nowPrice, String
                               min52, String time, String name, String tradeAmount, String swing, String
                               todayOpenPrice, String diff_rate, String minPrice) {
@@ -194,5 +195,28 @@ public class StockIndex {
 
     public void setMinPrice(String minPrice) {
         this.minPrice = minPrice;
+    }
+
+    @Override
+    public String toString() {
+        return "StockIndex{" +
+                "yestodayClosePrice='" + yestodayClosePrice + '\'' +
+                ", todayMax='" + todayMax + '\'' +
+                ", todayMin='" + todayMin + '\'' +
+                ", max52='" + max52 + '\'' +
+                ", diff_money='" + diff_money + '\'' +
+                ", tradeNum='" + tradeNum + '\'' +
+                ", code='" + code + '\'' +
+                ", maxPrice='" + maxPrice + '\'' +
+                ", nowPrice='" + nowPrice + '\'' +
+                ", min52='" + min52 + '\'' +
+                ", time='" + time + '\'' +
+                ", name='" + name + '\'' +
+                ", tradeAmount='" + tradeAmount + '\'' +
+                ", swing='" + swing + '\'' +
+                ", todayOpenPrice='" + todayOpenPrice + '\'' +
+                ", diff_rate='" + diff_rate + '\'' +
+                ", minPrice='" + minPrice + '\'' +
+                '}';
     }
 }

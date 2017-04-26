@@ -1,13 +1,11 @@
 package com.shuzicai.server.task.job;
 
 import com.shuzicai.server.service.GameLondonService;
-import com.shuzicai.server.task.GussLondonJob;
 import com.shuzicai.server.utils.DateUtils;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,11 +13,11 @@ import java.util.Calendar;
 
 /**
  * Created by Nicky on 2017/4/8.
- * 任务
+ * 获取伦敦金信息
  */
-public class LondonGoldJob implements Job {
+public class LondonIndexJob implements Job {
     //日志
-    private static Logger log = LoggerFactory.getLogger(LondonGoldJob.class);
+    private static Logger log = LoggerFactory.getLogger(LondonIndexJob.class);
 
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
         log.info("========获取伦敦金的数据,每10分钟一次=======");
@@ -37,12 +35,7 @@ public class LondonGoldJob implements Job {
         boolean isAM = DateUtils.isInTime("00:00-06:00", currentTime);
         boolean isPM = DateUtils.isInTime("07:00-23:59", currentTime);
         if (!isAM && !isPM) {
-            log.info("\n\n=====伦敦金：不在时间范围之内,开始停止");
-            try {
-                GussLondonJob.stopScheduler();
-            } catch (SchedulerException e) {
-                e.printStackTrace();
-            }
+            log.info("\n\n=====伦敦金：不在时间范围之内");
         } else {
             log.info("\n\n=====伦敦金：在时间范围之内，继续运行..." + currentTime);
         }

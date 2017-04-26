@@ -8,7 +8,9 @@ public class GameInfo {
 
     //objectId
     public final static String objectId_hushen = "vnGeVVVb";
-    public final static String objectId_london = "YztiGGGg";
+    public final static String objectId_weishu = "YztiGGGg";
+    public final static String objectId_quanshu = "R8Io666j";
+    public final static String objectId_london = "3DNy000A";
     //类型
     public final static int type_zhangdie = 0;
     public final static int type_weishu = 1;

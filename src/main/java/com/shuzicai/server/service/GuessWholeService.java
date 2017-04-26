@@ -144,6 +144,10 @@ public class GuessWholeService {
         List<BmobBatch> batches = new ArrayList<BmobBatch>();
         //记录金币的操作状态
         for (GuessWholeRecord forecastRecord : mantissaRecords) {
+            if (forecastRecord.getHandlerFlag() == 1) {
+                logger.info("----数据已经处理过了-----");
+                continue;
+            }
             Map<String, Object> bodyMap = new HashMap<String, Object>();
             bodyMap.put("indexResult", currentPrice);
             bodyMap.put("rewardCount", 0);
@@ -152,6 +156,7 @@ public class GuessWholeService {
             if (result) {
                 bodyMap.put("rewardCount", 60);
             }
+            bodyMap.put("handlerFlag", 1);
 
             String path = "/1/classes/GuessWholeRecord/" + forecastRecord.getObjectId();
             BmobBatch goldRecordBatch = new BmobBatch("PUT", path, bodyMap);

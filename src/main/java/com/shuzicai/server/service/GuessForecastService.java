@@ -124,6 +124,10 @@ public class GuessForecastService {
         }
         //记录金币的操作状态
         for (GuessForecastRecord forecastRecord : forecastRecords) {
+            if (forecastRecord.getHandlerFlag() == 1) {
+                logger.info("----数据已经处理过了-----");
+                continue;
+            }
             int betResult = lastPrice > currentPrice ? 1 : 0;
             int betStatus = (betResult == forecastRecord.getBetValue()) ? 1 : 0;
 
@@ -138,6 +142,7 @@ public class GuessForecastService {
             bodyMap.put("betStatus", betStatus);
             bodyMap.put("rewardValue", rewardValue);
             bodyMap.put("rewardFlag", 0);
+            bodyMap.put("handlerFlag", 1);
 
             String path = "/1/classes/GuessForecastRecord/" + forecastRecord.getObjectId();
             BmobBatch goldRecordBatch = new BmobBatch("PUT", path, bodyMap);

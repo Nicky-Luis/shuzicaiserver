@@ -205,4 +205,27 @@ public class HuShenIndex {
         this.minPrice = minPrice;
     }
 
+    @Override
+    public String toString() {
+        return "HuShenIndex{" +
+                "periodsNum=" + periodsNum +
+                ", yestodayClosePrice='" + yestodayClosePrice + '\'' +
+                ", todayMax='" + todayMax + '\'' +
+                ", todayMin='" + todayMin + '\'' +
+                ", max52='" + max52 + '\'' +
+                ", diff_money='" + diff_money + '\'' +
+                ", tradeNum='" + tradeNum + '\'' +
+                ", code='" + code + '\'' +
+                ", maxPrice='" + maxPrice + '\'' +
+                ", nowPrice='" + nowPrice + '\'' +
+                ", min52='" + min52 + '\'' +
+                ", time='" + time + '\'' +
+                ", name='" + name + '\'' +
+                ", tradeAmount='" + tradeAmount + '\'' +
+                ", swing='" + swing + '\'' +
+                ", todayOpenPrice='" + todayOpenPrice + '\'' +
+                ", diff_rate='" + diff_rate + '\'' +
+                ", minPrice='" + minPrice + '\'' +
+                '}';
+    }
 }

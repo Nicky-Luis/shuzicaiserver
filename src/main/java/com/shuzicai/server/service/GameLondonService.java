@@ -6,14 +6,19 @@ import com.shuzicai.server.entry.GameInfo;
 import com.shuzicai.server.entry.LondonGold;
 import com.shuzicai.server.network.APIInteractive;
 import com.shuzicai.server.network.INetworkResponse;
+import com.shuzicai.server.network.entity.BmobBatch;
 import com.shuzicai.server.utils.HttpUtils;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -83,11 +88,10 @@ public class GameLondonService {
                     GameInfo gameInfo = new Gson().fromJson(result.toString(), GameInfo.class);
                     if (null != gameInfo) {
                         //保存上一期的结果
-                        londonGold.setPeriodsNum(gameInfo.getNewestNum());
-                        updateLondonInfo(londonGold);
-                        //更新期数信息
-                        gameInfo.setNewestNum(gameInfo.getNewestNum() + 1);
-                        updateGameInfo(gameInfo);
+                        int num = gameInfo.getNewestNum();
+                        londonGold.setPeriodsNum(num);
+                        gameInfo.setNewestNum(num + 1);
+                        updateInfo(londonGold, gameInfo);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -96,33 +100,48 @@ public class GameLondonService {
         });
     }
 
-    /***
-     * 更新伦敦金信息
+
+    /**
+     * 上传伦敦金数据与最新的期数更新失败
+     *
      * @param londonGold
+     * @param gameInfo
      */
-    private static void updateLondonInfo(LondonGold londonGold) {
-        logger.info("----------开始上传伦敦金信息-----------");
-        APIInteractive.submitLondonGoldData(londonGold, new INetworkResponse() {
+    private static void updateInfo(LondonGold londonGold, GameInfo gameInfo) {
+        logger.info("\n开始上传伦敦金数据与最新的期数更新");
+
+        List<BmobBatch> batches = new ArrayList<BmobBatch>();
+        //添加股票信息数据
+        String path1 = "/1/classes/LondonGold";
+        BmobBatch indexBatch = new BmobBatch("POST", path1, londonGold);
+        batches.add(indexBatch);
+        //更新游戏信息数据
+        String path2 = "/1/classes/GameInfo/" + GameInfo.objectId_london;
+        BmobBatch gameBatch = new BmobBatch("PUT", path2, gameInfo);
+        batches.add(gameBatch);
+
+        //获取最终封装好的batch
+        APIInteractive.bmobBatch(BmobBatch.getBatchCmd(batches), new INetworkResponse() {
+
             public void onFailure(int code) {
-                logger.error("上传伦敦金信息失败");
+                logger.info("上传伦敦金数据与最新的期数更新失败");
             }
 
             public void onSucceed(JSONObject result) {
-                logger.info("上传伦敦金信息成功");
-            }
-        });
-    }
-
-    //更新游戏信息
-    private static void updateGameInfo(GameInfo gameInfo) {
-        logger.info("----------开始更新游戏期数信息-----------");
-        APIInteractive.updateGameInfo(GameInfo.objectId_london, gameInfo, new INetworkResponse() {
-            public void onFailure(int code) {
-                logger.error("更新游戏期数失败：" + code);
-            }
-
-            public void onSucceed(JSONObject result) {
-                logger.info("更新游戏期数成功：" + result.toString());
+                int resultCount = 0;
+                try {
+                    JSONArray jsonArray = result.optJSONArray("results");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject object = (JSONObject) jsonArray.get(i);
+                        if (object.has("success")) {
+                            resultCount++;
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    logger.error("上传伦敦金数据与最新的期数更新失败");
+                }
+                logger.info("上传伦敦金数据与最新的期数成功,resultCount = " + resultCount);
             }
         });
     }

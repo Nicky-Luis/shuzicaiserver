@@ -10,6 +10,7 @@ import com.shuzicai.server.network.APIInteractive;
 import com.shuzicai.server.network.BmobQueryUtils;
 import com.shuzicai.server.network.INetworkResponse;
 import com.shuzicai.server.network.entity.BmobBatch;
+import com.shuzicai.server.utils.DateUtils;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -18,6 +19,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,41 +65,7 @@ public class GuessMantissaService {
     }
 
     /**
-     * 获取最新的沪深300信息
-     *
-     * @param periodNum
-     */
-    private static void startGetHuShenInfo(final int periodNum) {
-        BmobQueryUtils utils = BmobQueryUtils.newInstance();
-        String where = utils.setValue("periodsNum").equal(periodNum);
-        APIInteractive.getHuShenIndex(where, new INetworkResponse() {
-            public void onFailure(int code) {
-                logger.error("获取最新沪深信息失败：" + code);
-            }
-
-            public void onSucceed(JSONObject result) {
-                logger.info("获取沪深信息成功：" + result);
-                JSONArray bodyArrays = result.optJSONArray("results");
-                if (null != bodyArrays) {
-                    Gson gson = new Gson();
-                    Type listType = new TypeToken<List<HuShenIndex>>() {
-                    }.getType();
-                    List<HuShenIndex> stockIndices = gson.fromJson(bodyArrays.toString(), listType);
-                    if (stockIndices.size() > 0) {
-                        //最新的价格
-                        float currentPrice = Float.valueOf(stockIndices.get(0).getNowPrice());
-                        int Num = (int) ((currentPrice - (int) currentPrice) * 100);//取小数点后两位
-                        logger.info("当前的价格：" + currentPrice + ",后两位" + Num);
-                        startGetForecastInfo(periodNum, Num, GuessMantissaRecord.Index_Type_Hushen);
-                    }
-                }
-            }
-        });
-    }
-
-
-    /**
-     * 获取最新的沪深300信息
+     * 获取最新伦敦金信息
      *
      * @param periodNum
      */
@@ -120,9 +88,58 @@ public class GuessMantissaService {
                     if (stockIndices.size() > 0) {
                         //最新的价格
                         float currentPrice = Float.valueOf(stockIndices.get(0).getPrice());
-                        int Num = (int) ((currentPrice - (int) currentPrice) * 100);//取小数点后两位
+                        //取小数点后两位
+                        int Num = (int) ((currentPrice - (int) currentPrice) * 100);
+                        logger.info("\n\n=======开始处理伦敦金预测信息==========\n");
                         logger.info("当前的价格：" + currentPrice + ",后两位" + Num);
                         startGetForecastInfo(periodNum, Num, GuessMantissaRecord.Index_Type_Gold);
+                    }
+                }
+            }
+        });
+    }
+
+
+    /**
+     * 获取最新的沪深300信息
+     *
+     * @param periodNum
+     */
+    private static void startGetHuShenInfo(final int periodNum) {
+        //判断时间
+        Calendar c = Calendar.getInstance();
+        String currentTime = c.get(Calendar.HOUR_OF_DAY) + ":" + c.get(Calendar.MINUTE);
+        boolean isAM = DateUtils.isInTime("09:30-11:30", currentTime);
+        boolean isPM = DateUtils.isInTime("13:00-15:00", currentTime);
+        if (!isAM && !isPM) {
+            logger.info("沪深300 指数预测不在时间范围之内,直接跳过");
+            return;
+        }
+
+        //开始获取沪深300指数
+        BmobQueryUtils utils = BmobQueryUtils.newInstance();
+        String where = utils.setValue("periodsNum").equal(periodNum);
+        APIInteractive.getHuShenIndex(where, new INetworkResponse() {
+            public void onFailure(int code) {
+                logger.error("获取最新沪深信息失败：" + code);
+            }
+
+            public void onSucceed(JSONObject result) {
+                logger.info("获取沪深信息成功：" + result);
+                JSONArray bodyArrays = result.optJSONArray("results");
+                if (null != bodyArrays) {
+                    Gson gson = new Gson();
+                    Type listType = new TypeToken<List<HuShenIndex>>() {
+                    }.getType();
+                    List<HuShenIndex> stockIndices = gson.fromJson(bodyArrays.toString(), listType);
+                    if (stockIndices.size() > 0) {
+                        //最新的价格
+                        float currentPrice = Float.valueOf(stockIndices.get(0).getNowPrice());
+                        //取小数点后两位
+                        int Num = (int) ((currentPrice - (int) currentPrice) * 100);
+                        logger.info("\n\n=======开始处理沪深300预测信息==========\n");
+                        logger.info("当前的价格：" + currentPrice + ",后两位" + Num);
+                        startGetForecastInfo(periodNum, Num, GuessMantissaRecord.Index_Type_Hushen);
                     }
                 }
             }
@@ -136,10 +153,10 @@ public class GuessMantissaService {
      */
     private static void startGetForecastInfo(int periodNum, final int currentPrice, int type) {
         BmobQueryUtils utils = BmobQueryUtils.newInstance();
-        JSONObject jsonObject1=new JSONObject();
-        jsonObject1.put("periodNum",periodNum);
-        JSONObject jsonObject2=new JSONObject();
-        jsonObject2.put("indexType",type);
+        JSONObject jsonObject1 = new JSONObject();
+        jsonObject1.put("periodNum", periodNum);
+        JSONObject jsonObject2 = new JSONObject();
+        jsonObject2.put("indexType", type);
         APIInteractive.getGuessMantissaRecordInfo(utils.and(jsonObject1, jsonObject2), new INetworkResponse() {
             public void onFailure(int code) {
                 logger.error("获取尾数预测信息失败：" + code);
@@ -182,9 +199,14 @@ public class GuessMantissaService {
         List<BmobBatch> batches = new ArrayList<BmobBatch>();
         //记录金币的操作状态
         for (GuessMantissaRecord forecastRecord : mantissaRecords) {
+            if (forecastRecord.getHandlerFlag() == 1) {
+                logger.info("----数据已经处理过了-----");
+                continue;
+            }
             Map<String, Object> bodyMap = new HashMap<String, Object>();
             bodyMap.put("indexResult", currentPrice);
             bodyMap.put("rewardCount", 0);
+            bodyMap.put("handlerFlag", 1);
 
             //计算押注的结果
             if (forecastRecord.getGuessType() == GuessMantissaRecord.Guess_Type_Percentile) {

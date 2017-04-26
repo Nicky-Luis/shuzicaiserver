@@ -1,6 +1,11 @@
 package com.shuzicai.server.task;
 
-import com.shuzicai.server.task.job.StockIndexJob;
+import com.shuzicai.server.task.job.GameIndexJob;
+import com.shuzicai.server.task.job.GuessForecastJob;
+import com.shuzicai.server.task.job.GuessMantissaJob;
+import com.shuzicai.server.task.job.GuessWholeJob;
+import com.shuzicai.server.task.job.LondonIndexJob;
+import com.shuzicai.server.task.job.ShowIndexJob;
 
 import org.quartz.CronScheduleBuilder;
 import org.quartz.Job;
@@ -9,7 +14,6 @@ import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
-import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
@@ -29,26 +33,23 @@ import java.util.Calendar;
 public class QuartzManager {
     //日志
     private static Logger log = LoggerFactory.getLogger(QuartzManager.class);
-    //定时器
-    private static Scheduler scheduler = null;
 
-    //  星期一到星期五的15点15分0秒触发任务，股票任务
-    private final static String StockIndexCronExpression = "0 15 15 ? * MON-FRI";
-    //  星期一到星期五的9点35分0秒触发任务，上午的
-    private final static String GameIndexCronExpression1 = "0 35 9 ? * MON-FRI";
-    //  星期一到星期五的13点5分0秒触发任务，下午的
-    private final static String GameIndexCronExpression2 = "0 5 13 ? * MON-FRI";
-    //  星期一到星期五的0点0分0秒触发任务，伦敦金
-    private final static String LondonIndexCronExpression1 = "0 0 0 ? * MON-FRI";
-    //  星期一到星期五的7点0分0秒触发任务，伦敦金
-    private final static String LondonIndexCronExpression2 = "0 0 7 ? * MON-FRI";
+    //  星期一到星期五的15点35分0秒触发任务，股票任务
+    private final static String StockIndexCronExpression = "0 35 15 ? * MON-FRI";
+    //  星期一到星期五每10分钟运行一次,上午9:30-11:30,下午13:00-15:00
+    private final static String GameIndexCronExpression1 = "0 35/10 9 ? * MON-FRI";
+    private final static String GameIndexCronExpression2 = "0 5,15,25 11 ? * MON-FRI";
+    private final static String GameIndexCronExpression3 = "0 5/10 10,13,14 ? * MON-FRI";
+    //  星期一到星期五的0点0分0秒触发任务，伦敦金:00:00-06:00 07:00-23:59
+    private final static String LondonIndexCronExpression1 = "0 5/10 0-5 ? * MON-FRI";
+    private final static String LondonIndexCronExpression2 = "0 5/10 7-23 ? * MON-FRI";
+    //涨跌与全数处理，每天9：00到15：59每分钟处理一次
+    private final static String ForecastWholeExpression = "0 * 9-15 ? * MON-FRI";
+    //尾数处理，每分钟处理一次
+    private final static String ForecastMantissaExpression = "0 * * ? * MON-FRI";
+
     //测试
-    private final static String TestExpression = "0 35 22 ? * MON-FRI";
-
-    //任务组
-    private final static String JOB_GROUP_NAME = "QUARTZ_JOBGROUP_NAME";
-    //触发器组
-    private final static String TRIGGER_GROUP_NAME = "QUARTZ_TRIGGERGROUP_NAME";
+    private final static String TestExpression = "0 53 21 ? * MON-FRI";
 
     /**
      * 测试
@@ -57,56 +58,22 @@ public class QuartzManager {
         log.info("\n=============start task==================\n");
         try {
             //每一天查一次就行,用于显示的股票信息
-           createHuShenScheduler(StockIndexJob.class, StockIndexCronExpression, "index");
-            //上午的 //下午的
-            createHuShenScheduler(GussHuShenJob.class, GameIndexCronExpression1, "hushen1");
-            createHuShenScheduler(GussHuShenJob.class, GameIndexCronExpression2, "hushen2");
+            createHuShenScheduler(ShowIndexJob.class, StockIndexCronExpression, "index");
+            //各个时段
+            createHuShenScheduler(GameIndexJob.class, GameIndexCronExpression1, "hushen1");
+            createHuShenScheduler(GameIndexJob.class, GameIndexCronExpression2, "hushen2");
+            createHuShenScheduler(GameIndexJob.class, GameIndexCronExpression3, "hushen3");
             //伦敦金
-            createHuShenScheduler(GussLondonJob.class, LondonIndexCronExpression1, "london1");
-            createHuShenScheduler(GussLondonJob.class, LondonIndexCronExpression2, "london2");
+            createHuShenScheduler(LondonIndexJob.class, LondonIndexCronExpression1, "london1");
+            createHuShenScheduler(LondonIndexJob.class, LondonIndexCronExpression2, "london2");
+            //游戏预测结果处理
+            createHuShenScheduler(GuessForecastJob.class, ForecastWholeExpression, "GuessForecastJob");
+            createHuShenScheduler(GuessMantissaJob.class, ForecastMantissaExpression, "GuessMantissaJob");
+            createHuShenScheduler(GuessWholeJob.class, ForecastWholeExpression, "GuessWholeJob");
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
     }
-
-    /**
-     * 添加任务的方法
-     *
-     * @param jobName     任务名
-     * @param triggerName 触发器名
-     * @param jobClass    执行任务的类
-     * @param seconds     间隔时间
-     * @throws SchedulerException
-     */
-    public static Scheduler addJob(String jobName, String triggerName,
-                                   Class<? extends Job> jobClass,
-                                   int seconds) throws SchedulerException {
-        log.info("==================initialization=================");
-        //创建一个SchedulerFactory工厂实例
-        SchedulerFactory sf = new StdSchedulerFactory();
-        //通过SchedulerFactory构建Scheduler对象
-        Scheduler sche = sf.getScheduler();
-        log.info("===================initialize finshed===================");
-        //用于描叙Job实现类及其他的一些静态信息，构建一个作业实例
-        JobDetail jobDetail = JobBuilder.newJob(jobClass)
-                .withIdentity(jobName, JOB_GROUP_NAME)
-                .build();
-
-        //构建一个触发器，规定触发的规则
-        Trigger trigger = TriggerBuilder.newTrigger()
-                .withIdentity(triggerName, TRIGGER_GROUP_NAME)//给触发器起一个名字和组名
-                .startNow()//立即执行
-                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInSeconds(seconds)//时间间隔  单位：秒
-                        .repeatForever()).build();
-
-        //向Scheduler中添加job任务和trigger触发器
-        sche.scheduleJob(jobDetail, trigger);
-        //启动
-        sche.start();
-        return sche;
-    }
-
 
     /**
      * 获取排除的日子
@@ -137,11 +104,11 @@ public class QuartzManager {
      *
      * @throws SchedulerException
      */
-    private static void createHuShenScheduler(Class<? extends Job> jobClass, String ctr, String flag) throws
+    private static Scheduler createHuShenScheduler(Class<? extends Job> jobClass, String ctr, String flag) throws
             SchedulerException {
         log.info("\n\n=====创建定时器" + flag + "========\n");
         SchedulerFactory schedulerFactory = new StdSchedulerFactory();
-        scheduler = schedulerFactory.getScheduler();
+        Scheduler scheduler = schedulerFactory.getScheduler();
 
         //定义当前调度器的具体作业对象
         JobDetail jobDetail = JobBuilder.
@@ -158,6 +125,7 @@ public class QuartzManager {
         scheduler.addCalendar("calendar" + flag, getRemoveDay(), true, false);
         scheduler.scheduleJob(jobDetail, trigger3);
         scheduler.start();
+        return scheduler;
     }
 
     /**
@@ -165,12 +133,11 @@ public class QuartzManager {
      *
      * @throws SchedulerException
      */
-    private static void stopScheduler() throws SchedulerException {
+    private static void stopScheduler(Scheduler scheduler) throws SchedulerException {
         if (null != scheduler) {
             if (scheduler.isStarted()) {
                 scheduler.shutdown();
             }
-            scheduler = null;
         }
     }
 }

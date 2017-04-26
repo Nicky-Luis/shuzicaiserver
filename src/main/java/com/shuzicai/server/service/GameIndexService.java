@@ -7,15 +7,18 @@ import com.shuzicai.server.entry.GameInfo;
 import com.shuzicai.server.entry.HuShenIndex;
 import com.shuzicai.server.network.APIInteractive;
 import com.shuzicai.server.network.INetworkResponse;
+import com.shuzicai.server.network.entity.BmobBatch;
 import com.shuzicai.server.utils.HttpUtils;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +41,6 @@ public class GameIndexService {
         headers.put("Authorization", GlobalConstants.APP_CODE);
         Map<String, String> querys = new HashMap<String, String>();
         querys.put("stocks", stocks);
-        //querys.put("needIndex", "1");
-        //querys.put("need_k_pic", "1");
 
         try {
             HttpResponse response = HttpUtils.doGet(GlobalConstants.Index_Host, GlobalConstants.Index_Path,
@@ -48,8 +49,8 @@ public class GameIndexService {
             System.out.println(response.toString());
             //获取response的body
             String jsonResult = EntityUtils.toString(response.getEntity());
-            logger.info("--------返回的股票结果--------");
-            logger.info(jsonResult);
+            logger.info("------开始解析作为游戏信息的沪深300-----");
+            logger.info("原始数据：" + jsonResult);
             startAnalysisStockIndex(jsonResult);
         } catch (Exception e) {
             e.printStackTrace();
@@ -103,10 +104,8 @@ public class GameIndexService {
                     if (null != gameInfo) {
                         //保存上一期的结果
                         stockIndex.setPeriodsNum(gameInfo.getNewestNum());
-                        updateStockIndexInfo(stockIndex);
-                        //更新期数信息
                         gameInfo.setNewestNum(gameInfo.getNewestNum() + 1);
-                        updateGameInfo(GameInfo.objectId_hushen, gameInfo);
+                        updateInfo(stockIndex, gameInfo);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -115,33 +114,47 @@ public class GameIndexService {
         });
     }
 
-    /***
-     * 更新沪深300数据信息
+    /**
+     * 开始上传用于游戏的股票数据与最新的期数更新
+     *
      * @param stockIndex
+     * @param gameInfo
      */
-    private static void updateStockIndexInfo(HuShenIndex stockIndex) {
-        logger.info("----------开始上传沪深300信息-----------");
-        APIInteractive.submitHuShenIndex(stockIndex, new INetworkResponse() {
+    private static void updateInfo(HuShenIndex stockIndex, GameInfo gameInfo) {
+        logger.info("\n开始上传用于游戏的股票数据与最新的期数更新");
+
+        List<BmobBatch> batches = new ArrayList<BmobBatch>();
+        //添加股票信息数据
+        String path1 = "/1/classes/HuShenIndex";
+        BmobBatch indexBatch = new BmobBatch("POST", path1, stockIndex);
+        batches.add(indexBatch);
+        //更新游戏信息数据
+        String path2 = "/1/classes/GameInfo/" + GameInfo.objectId_hushen;
+        BmobBatch gameBatch = new BmobBatch("PUT", path2, gameInfo);
+        batches.add(gameBatch);
+
+        //获取最终封装好的batch
+        APIInteractive.bmobBatch(BmobBatch.getBatchCmd(batches), new INetworkResponse() {
+
             public void onFailure(int code) {
-                logger.error("上传沪深300信息失败");
+                logger.info("上传用于游戏的股票数据与最新的期数更新失败");
             }
 
             public void onSucceed(JSONObject result) {
-                logger.info("上传沪深300信息成功");
-            }
-        });
-    }
-
-    //更新游戏期数信息
-    private static void updateGameInfo(String objectID, GameInfo gameInfo) {
-        logger.info("----------开始更新沪深300游戏期数信息-----------");
-        APIInteractive.updateGameInfo(objectID, gameInfo, new INetworkResponse() {
-            public void onFailure(int code) {
-                logger.error("更新沪深300游戏期数失败：" + code);
-            }
-
-            public void onSucceed(JSONObject result) {
-                logger.info("更新沪深300游戏期数成功：" + result.toString());
+                int resultCount = 0;
+                try {
+                    JSONArray jsonArray = result.optJSONArray("results");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject object = (JSONObject) jsonArray.get(i);
+                        if (object.has("success")) {
+                            resultCount++;
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    logger.error("上传用于游戏的股票数据与最新的期数更新失败");
+                }
+                logger.info("上传用于显示的股票数据成功,resultCount = " + resultCount);
             }
         });
     }
