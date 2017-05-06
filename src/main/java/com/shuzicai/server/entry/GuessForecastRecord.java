@@ -14,7 +14,7 @@ public class GuessForecastRecord {
     //用户id
     private String userId;
     //押注银元数值
-    private float betSilverValue;
+    private int betSilverValue;
     //押注涨跌情况，0:跌，1：涨
     private int betValue;
     //押注期数
@@ -32,7 +32,7 @@ public class GuessForecastRecord {
     //预测是否已经处理：0：未处理，1：已经处理
     private int handlerFlag;
 
-    public GuessForecastRecord(String objectId, String userId, float betSilverValue, int betValue, int periodNum, int
+    public GuessForecastRecord(String objectId, String userId, int betSilverValue, int betValue, int periodNum, int
             betStatus, int betResult, float indexResult, float rewardValue) {
         this.objectId = objectId;
         this.userId = userId;
@@ -53,7 +53,7 @@ public class GuessForecastRecord {
         return userId;
     }
 
-    public float getBetSilverValue() {
+    public int getBetSilverValue() {
         return betSilverValue;
     }
 
@@ -97,7 +97,7 @@ public class GuessForecastRecord {
         this.userId = userId;
     }
 
-    public void setBetSilverValue(float betSilverValue) {
+    public void setBetSilverValue(int betSilverValue) {
         this.betSilverValue = betSilverValue;
     }
 

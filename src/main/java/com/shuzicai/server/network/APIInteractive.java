@@ -3,11 +3,10 @@ package com.shuzicai.server.network;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.shuzicai.server.entry.GameInfo;
+import com.shuzicai.server.entry.Config;
 import com.shuzicai.server.entry.GuessForecastRecord;
 import com.shuzicai.server.entry.GuessMantissaRecord;
 import com.shuzicai.server.entry.GuessWholeRecord;
-import com.shuzicai.server.entry.HuShenIndex;
 import com.shuzicai.server.entry.LondonGold;
 import com.shuzicai.server.entry.StockIndex;
 
@@ -54,7 +53,7 @@ public class APIInteractive {
      * @param bean
      * @param callback
      */
-    public static void updateGameInfo(String objectID, GameInfo bean, final INetworkResponse
+    public static void updateGameInfo(String objectID, Config bean, final INetworkResponse
             callback) {
         if (null == request) {
             initRetrofit();
@@ -94,12 +93,12 @@ public class APIInteractive {
     }
 
     /**
-     * 提交伦敦金信息
+     * 获取伦敦金信息
      *
      * @param where
      * @param callback
      */
-    public static void getLondonGoldData(String where, final INetworkResponse callback) {
+    public static void getLondonGold(String where, final INetworkResponse callback) {
         if (null == request) {
             initRetrofit();
         }
@@ -121,33 +120,6 @@ public class APIInteractive {
         NetworkRequest.netRequest(call, callback);
     }
 
-    /**
-     * 提交沪深300 情况
-     *
-     * @param index
-     * @param callback
-     */
-    public static void submitHuShenIndex(HuShenIndex index, final INetworkResponse callback) {
-        if (null == request) {
-            initRetrofit();
-        }
-        Call<JsonObject> call = request.submitHuShenIndex(index);
-        NetworkRequest.netRequest(call, callback);
-    }
-
-    /**
-     * 获取最新的沪深300 情况
-     *
-     * @param where
-     * @param callback
-     */
-    public static void getHuShenIndex(String where, final INetworkResponse callback) {
-        if (null == request) {
-            initRetrofit();
-        }
-        Call<JsonObject> call = request.getHuShenIndex(where);
-        NetworkRequest.netRequest(call, callback);
-    }
 
     /**
      * 获取涨跌预测的信息

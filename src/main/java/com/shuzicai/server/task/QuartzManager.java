@@ -1,12 +1,5 @@
 package com.shuzicai.server.task;
 
-import com.shuzicai.server.task.job.GameIndexJob;
-import com.shuzicai.server.task.job.GuessForecastJob;
-import com.shuzicai.server.task.job.GuessMantissaJob;
-import com.shuzicai.server.task.job.GuessWholeJob;
-import com.shuzicai.server.task.job.LondonIndexJob;
-import com.shuzicai.server.task.job.ShowIndexJob;
-
 import org.quartz.CronScheduleBuilder;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
@@ -33,46 +26,19 @@ import java.util.Calendar;
 public class QuartzManager {
     //日志
     private static Logger log = LoggerFactory.getLogger(QuartzManager.class);
-
-    //  星期一到星期五的15点35分0秒触发任务，股票任务
-    private final static String StockIndexCronExpression = "0 35 15 ? * MON-FRI";
-    //  星期一到星期五每10分钟运行一次,上午9:30-11:30,下午13:00-15:00
-    private final static String GameIndexCronExpression1 = "0 35/10 9 ? * MON-FRI";
-    private final static String GameIndexCronExpression2 = "0 5,15,25 11 ? * MON-FRI";
-    private final static String GameIndexCronExpression3 = "0 5/10 10,13,14 ? * MON-FRI";
-    //  星期一到星期五的0点0分0秒触发任务，伦敦金:00:00-06:00 07:00-23:59
-    private final static String LondonIndexCronExpression1 = "0 5/10 0-5 ? * MON-FRI";
-    private final static String LondonIndexCronExpression2 = "0 5/10 7-23 ? * MON-FRI";
-    //涨跌与全数处理，每天9：00到15：59每分钟处理一次
-    private final static String ForecastWholeExpression = "0 * 9-15 ? * MON-FRI";
-    //尾数处理，每分钟处理一次
-    private final static String ForecastMantissaExpression = "0 * * ? * MON-FRI";
-
+    //  星期一到星期五的没10分钟触发一次
+    private final static String TaskCronExpression = "0 13/3 * ? * MON-SAT";
     //测试
-    private final static String TestExpression = "0 53 21 ? * MON-FRI";
+    private final static String TestExpression = "0 29/2 * ? * MON-FRI";
+    //Scheduler
+    private static Scheduler scheduler;
 
     /**
      * 测试
      */
-    public static void startTask() {
-        log.info("\n=============start task==================\n");
-        try {
-            //每一天查一次就行,用于显示的股票信息
-            createHuShenScheduler(ShowIndexJob.class, StockIndexCronExpression, "index");
-            //各个时段
-            createHuShenScheduler(GameIndexJob.class, GameIndexCronExpression1, "hushen1");
-            createHuShenScheduler(GameIndexJob.class, GameIndexCronExpression2, "hushen2");
-            createHuShenScheduler(GameIndexJob.class, GameIndexCronExpression3, "hushen3");
-            //伦敦金
-            createHuShenScheduler(LondonIndexJob.class, LondonIndexCronExpression1, "london1");
-            createHuShenScheduler(LondonIndexJob.class, LondonIndexCronExpression2, "london2");
-            //游戏预测结果处理
-            createHuShenScheduler(GuessForecastJob.class, ForecastWholeExpression, "GuessForecastJob");
-            createHuShenScheduler(GuessMantissaJob.class, ForecastMantissaExpression, "GuessMantissaJob");
-            createHuShenScheduler(GuessWholeJob.class, ForecastWholeExpression, "GuessWholeJob");
-        } catch (SchedulerException e) {
-            e.printStackTrace();
-        }
+    public static void startTask() throws SchedulerException {
+        scheduler = createHuShenScheduler(HandlerTaskJob.class,
+                TaskCronExpression, "TaskCronExpression");
     }
 
     /**
@@ -90,6 +56,7 @@ public class QuartzManager {
         cal.set(2017, Calendar.OCTOBER, 2);
         cal.set(2017, Calendar.OCTOBER, 3);
         cal.set(2017, Calendar.OCTOBER, 4);
+
         cal.set(2017, Calendar.OCTOBER, 5);
         cal.set(2017, Calendar.OCTOBER, 6);
 
@@ -104,7 +71,9 @@ public class QuartzManager {
      *
      * @throws SchedulerException
      */
-    private static Scheduler createHuShenScheduler(Class<? extends Job> jobClass, String ctr, String flag) throws
+    private static Scheduler createHuShenScheduler(Class<? extends Job> jobClass,
+                                                   String ctr,
+                                                   String flag) throws
             SchedulerException {
         log.info("\n\n=====创建定时器" + flag + "========\n");
         SchedulerFactory schedulerFactory = new StdSchedulerFactory();
@@ -133,7 +102,7 @@ public class QuartzManager {
      *
      * @throws SchedulerException
      */
-    private static void stopScheduler(Scheduler scheduler) throws SchedulerException {
+    private static void stopScheduler() throws SchedulerException {
         if (null != scheduler) {
             if (scheduler.isStarted()) {
                 scheduler.shutdown();

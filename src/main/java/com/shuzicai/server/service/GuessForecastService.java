@@ -2,9 +2,8 @@ package com.shuzicai.server.service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.shuzicai.server.entry.GameInfo;
 import com.shuzicai.server.entry.GuessForecastRecord;
-import com.shuzicai.server.entry.HuShenIndex;
+import com.shuzicai.server.entry.LondonGold;
 import com.shuzicai.server.network.APIInteractive;
 import com.shuzicai.server.network.BmobQueryUtils;
 import com.shuzicai.server.network.INetworkResponse;
@@ -26,36 +25,42 @@ import java.util.Map;
  * 涨跌预测的处理
  */
 public class GuessForecastService {
-    //日志类
-    private static Logger logger = Logger.getLogger(GameIndexService.class);
 
-    //开始处理中奖结果
-    public static void startForecastHandler() {
-        getGameInfo();
-    }
+    //日志类
+    private static Logger logger = Logger.getLogger(GuessForecastService.class);
 
     /**
-     * 获取最新一期游戏信息
+     * 开始处理涨跌预测数据信息
+     *
+     * @param currentIndex
+     * @param currentPeriodNum
      */
-    private static void getGameInfo() {
-        logger.info("----------开始获取沪深300游戏信息-----------");
-        APIInteractive.getGameInfo(GameInfo.objectId_hushen, new INetworkResponse() {
+    public static void startForecastHandler(final LondonGold currentIndex, final int currentPeriodNum) {
+        logger.info("\n\n===============开始处理涨跌预测数据信息=============\n\n");
+        logger.info("先获取上一次伦敦金数据信息");
+        BmobQueryUtils utils = BmobQueryUtils.newInstance();
+        String where = utils.setValue("periodsNum").equal(currentPeriodNum - 1);
+        APIInteractive.getLondonGold(where, new INetworkResponse() {
             public void onFailure(int code) {
-                logger.error("获取最新期数信息失败：" + code);
+                logger.error("获取上一次伦敦金数据信息失败：" + code);
             }
 
             public void onSucceed(JSONObject result) {
-                logger.info("获取最新期数信息成功：" + result.toString());
-                //更新数据
-                try {
-                    GameInfo gameInfo = new Gson().fromJson(result.toString(), GameInfo.class);
-                    if (null != gameInfo) {
-                        //本期的期数
-                        int num = gameInfo.getNewestNum() - 1;
-                        startGetHuShenInfo(num);
+                logger.info("获取上一次伦敦金数据信息成功：" + result);
+                JSONArray bodyArrays = result.optJSONArray("results");
+                if (null != bodyArrays) {
+                    Gson gson = new Gson();
+                    Type listType = new TypeToken<List<LondonGold>>() {
+                    }.getType();
+                    List<LondonGold> stockIndices = gson.fromJson(bodyArrays.toString(), listType);
+                    if (stockIndices.size() >= 1) {
+                        float currentPrice = Float.valueOf(currentIndex.getLatestpri());
+                        float lastPrice = Float.valueOf(stockIndices.get(0).getLatestpri());
+                        //获取预测信息
+                        startGetForecastInfo(currentPeriodNum, currentPrice, lastPrice);
+                    } else {
+                        logger.info("伦敦金信息不足两次，无法进行涨跌预测");
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
         });
@@ -66,18 +71,21 @@ public class GuessForecastService {
      *
      * @param periodNum
      */
-    private static void startGetForecastInfo(int periodNum, final float currentPrice,
+    private static void startGetForecastInfo(final int periodNum,
+                                             final float currentPrice,
                                              final float lastPrice) {
-        logger.error("\n两次指数数据为，currentPrice：" + currentPrice + "，lastPrice：" + lastPrice);
+        logger.info("\n\n两伦敦金数据为，currentPrice：" + currentPrice + "，lastPrice：" + lastPrice);
+        logger.info("\n\n===============开始获取涨跌预测信息==============\n\n");
+
         BmobQueryUtils utils = BmobQueryUtils.newInstance();
         final String where = utils.setValue("periodNum").equal(periodNum);
         APIInteractive.getGuessForecastRecordInfo(where, new INetworkResponse() {
             public void onFailure(int code) {
-                logger.error("获取涨跌预测信息失败：" + code);
+                logger.error("获取获取涨跌预测信息失败：" + code);
             }
 
             public void onSucceed(JSONObject result) {
-                logger.info("获取涨跌预测信息成功：" + result);
+                logger.info("获取获取涨跌预测信息成功：" + result);
                 if (null != result) {
                     JSONArray bodyArrays = result.optJSONArray("results");
                     if (null == bodyArrays) {
@@ -87,14 +95,32 @@ public class GuessForecastService {
                     Type listType = new TypeToken<List<GuessForecastRecord>>() {
                     }.getType();
                     List<GuessForecastRecord> forecastRecords = gson.fromJson(bodyArrays.toString(), listType);
+                    //计算涨跌预测的统计数据
+                    if (null != forecastRecords) {
+                        int rewardSum = 0;//赢钱总和
+                        int loserSum = 0;//输钱总额
+                        //涨跌结果
+                        int betResult = lastPrice >= currentPrice ? 0 : 1;
+                        for (GuessForecastRecord forecastRecord : forecastRecords) {
+                            if (betResult == forecastRecord.getBetValue()) {
+                                rewardSum = rewardSum + forecastRecord.getBetSilverValue();
+                            } else {
+                                loserSum = loserSum + forecastRecord.getBetSilverValue();
+                            }
+                        }
 
-                    //如果上限对于50
-                    int num = forecastRecords.size() / 50;
-                    for (int count = 0; count <= num; count++) {
-                        int endNum = (count * 50) + 49;
-                        int end = endNum > forecastRecords.size() ? forecastRecords.size() : endNum;
-                        batchesUpdate(forecastRecords.subList(count * 50, end), currentPrice, lastPrice);
+                        //如果上限对于50
+                        int length = forecastRecords.size();
+                        int num = length / 50;
+                        for (int count = 0; count <= num; count++) {
+                            int endNum = (count * 50) + 49;
+                            int end = endNum > length ? length : endNum;
+                            batchesUpdate(forecastRecords.subList(count * 50, end),
+                                    rewardSum, loserSum, betResult, currentPrice);
+                        }
                     }
+                } else {
+                    logger.error("获取获取涨跌预测信息为空");
                 }
             }
         });
@@ -104,45 +130,44 @@ public class GuessForecastService {
      * 拼装结果
      *
      * @param forecastRecords
-     * @param currentPrice
-     * @param lastPrice
+     * @param rewardSum
+     * @param loserSum
+     * @param betResult
      */
     private static void batchesUpdate(List<GuessForecastRecord> forecastRecords,
-                                      final float currentPrice, final float lastPrice) {
-        logger.info("-------开始计算涨跌预测与结果-------");
+                                      int rewardSum, int loserSum,
+                                      int betResult, float currentPrice) {
+        logger.info("-------开始计算涨跌预测结果-------");
+        logger.info("\nrewardSum：" + rewardSum
+                + "\nloserSum：" + loserSum
+                + "\nbetResult：" + betResult
+                + "\ncurrentPrice：" + currentPrice);
         List<BmobBatch> batches = new ArrayList<BmobBatch>();
-        float rewardSum = 0;//赢钱总和
-        float loserSum = 0;//输钱总额
-        for (GuessForecastRecord forecastRecord : forecastRecords) {
-            int betResult = lastPrice > currentPrice ? 1 : 0;
-            int betStatus = (betResult == forecastRecord.getBetValue()) ? 1 : 0;
-            if (1 == betStatus) {
-                rewardSum = rewardSum + forecastRecord.getBetSilverValue();
-            } else {
-                loserSum = loserSum + forecastRecord.getBetSilverValue();
-            }
-        }
+
         //记录金币的操作状态
         for (GuessForecastRecord forecastRecord : forecastRecords) {
             if (forecastRecord.getHandlerFlag() == 1) {
-                logger.info("----数据已经处理过了-----");
+                logger.info("----计算涨跌预测结果-----");
                 continue;
             }
-            int betResult = lastPrice > currentPrice ? 1 : 0;
-            int betStatus = (betResult == forecastRecord.getBetValue()) ? 1 : 0;
-
-            float rewardValue = 0;
+            //0:未开奖，1：中奖，2：未中奖
+            int betStatus = (betResult == forecastRecord.getBetValue()) ? 1 : 2;
             //计算奖品
+            float rewardValue = 0;
             if (betStatus == 1) {
-                rewardValue = loserSum * (forecastRecord.getBetSilverValue() / rewardSum);
+                if (loserSum == 0) {
+                    rewardValue = forecastRecord.getBetSilverValue();
+                } else {
+                    rewardValue = loserSum * (forecastRecord.getBetSilverValue() / rewardSum);
+                }
             }
             Map<String, Object> bodyMap = new HashMap<String, Object>();
             bodyMap.put("indexResult", currentPrice);
             bodyMap.put("betResult", betResult);
             bodyMap.put("betStatus", betStatus);
             bodyMap.put("rewardValue", rewardValue);
-            bodyMap.put("rewardFlag", 0);
-            bodyMap.put("handlerFlag", 1);
+            bodyMap.put("rewardFlag", betResult == 1 ? 0 : 1);//只有中奖了奖励才会未同步
+            bodyMap.put("handlerFlag", 1);//预测已处理
 
             String path = "/1/classes/GuessForecastRecord/" + forecastRecord.getObjectId();
             BmobBatch goldRecordBatch = new BmobBatch("PUT", path, bodyMap);
@@ -152,11 +177,10 @@ public class GuessForecastService {
         APIInteractive.bmobBatch(BmobBatch.getBatchCmd(batches), new INetworkResponse() {
 
             public void onFailure(int code) {
-                logger.info("更新失败");
+                logger.error("上传涨跌预测结果失败");
             }
 
             public void onSucceed(JSONObject result) {
-                logger.info("更新成功");
                 int resultCount = 0;
                 try {
                     JSONArray jsonArray = result.optJSONArray("results");
@@ -167,47 +191,10 @@ public class GuessForecastService {
                         }
                     }
                 } catch (JSONException e) {
+                    logger.error("更新涨跌预测中奖结果失败");
                     e.printStackTrace();
                 }
-                //只有三个值都成功时才提示成功
-                if (3 == resultCount) {
-                    // ToastUtils.showShortToast("兑换成功");
-                } else {
-                    // ToastUtils.showShortToast("兑换提交异常");
-                }
-            }
-        });
-    }
-
-    /**
-     * 获取最新的沪深300信息与上次的沪深指数信息
-     *
-     * @param periodNum
-     */
-    private static void startGetHuShenInfo(final int periodNum) {
-        BmobQueryUtils utils = BmobQueryUtils.newInstance();
-        String where = utils.setValue("periodsNum").Include(new Integer[]{periodNum, periodNum - 1});
-        APIInteractive.getHuShenIndex(where, new INetworkResponse() {
-            public void onFailure(int code) {
-                logger.error("获取沪深信息失败：" + code);
-            }
-
-            public void onSucceed(JSONObject result) {
-                logger.info("获取两次沪深信息成功：" + result);
-                JSONArray bodyArrays = result.optJSONArray("results");
-                if (null != bodyArrays) {
-                    Gson gson = new Gson();
-                    Type listType = new TypeToken<List<HuShenIndex>>() {
-                    }.getType();
-                    List<HuShenIndex> stockIndices = gson.fromJson(bodyArrays.toString(), listType);
-                    if (stockIndices.size() >= 2) {
-                        float currentPrice = Float.valueOf(stockIndices.get(0).getNowPrice());
-                        float lastPrice = Float.valueOf(stockIndices.get(1).getNowPrice());
-                        startGetForecastInfo(periodNum, currentPrice, lastPrice);
-                    } else {
-                        logger.info("沪深信息不足两次");
-                    }
-                }
+                logger.info("更新涨跌预测中奖结果成功,resultCount=" + resultCount);
             }
         });
     }

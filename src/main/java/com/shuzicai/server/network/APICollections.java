@@ -3,11 +3,10 @@ package com.shuzicai.server.network;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.shuzicai.server.entry.GameInfo;
+import com.shuzicai.server.entry.Config;
 import com.shuzicai.server.entry.GuessForecastRecord;
 import com.shuzicai.server.entry.GuessMantissaRecord;
 import com.shuzicai.server.entry.GuessWholeRecord;
-import com.shuzicai.server.entry.HuShenIndex;
 import com.shuzicai.server.entry.LondonGold;
 import com.shuzicai.server.entry.StockIndex;
 
@@ -42,7 +41,7 @@ public interface APICollections {
      * @param objectId
      * @return
      */
-    @GET("1/classes/GameInfo/{objectId}")
+    @GET("1/classes/Config/{objectId}")
     Call<JsonObject> getGameInfo(@Path("objectId") String objectId);
 
 
@@ -55,23 +54,7 @@ public interface APICollections {
     @POST("1/classes/StockIndex")
     Call<JsonObject> submitStockIndex(@Body StockIndex bean);
 
-    /**
-     * 提交股票信息
-     *
-     * @param bean
-     * @return
-     */
-    @POST("1/classes/HuShenIndex")
-    Call<JsonObject> submitHuShenIndex(@Body HuShenIndex bean);
 
-    /**
-     * 获取最新的股票信息
-     *
-     * @param where
-     * @return
-     */
-    @GET("1/classes/HuShenIndex")
-    Call<JsonObject> getHuShenIndex(@Query("where") String where);
 
     /**
      * 添加伦敦金信息
@@ -83,7 +66,7 @@ public interface APICollections {
     Call<JsonObject> submitLondonGold(@Body LondonGold bean);
 
     /**
-     * 添加伦敦金信息
+     * 查询伦敦金信息
      *
      * @param where
      * @return
@@ -99,9 +82,9 @@ public interface APICollections {
      * @param bean
      * @return
      */
-    @PUT("1/classes/GameInfo/{objectID}")
+    @PUT("1/classes/Config/{objectID}")
     Call<JsonObject> updateGameInfo(@Path("objectID") String objectID,
-                                    @Body GameInfo bean);
+                                    @Body Config bean);
 
 
     /**
@@ -179,4 +162,12 @@ public interface APICollections {
     @POST("1/batch")
     Call<JsonArray> bmobBatch(@Body Map<String, List> bean);
 
+
+    /**
+     * 获取服务器时间
+     *
+     * @return
+     */
+    @GET("1/timestamp")
+    Call<JsonObject> getLondonGold();
 }

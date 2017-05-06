@@ -30,8 +30,8 @@ public class GuessMantissaRecord {
     private int guessValue;
     //实际的指数
     private float indexResult;
-    //是否中奖
-    private boolean isReward;
+    //状态,0:未开奖，1：中奖，2：未中奖
+    private int betStatus;
     //获取的奖励数量
     private float rewardCount;
     //奖励是否已经同步：0：未同步，1：已经同步
@@ -39,7 +39,10 @@ public class GuessMantissaRecord {
     //预测是否已经处理：0：未处理，1：已经处理
     private int handlerFlag;
 
-    public GuessMantissaRecord(String objectId, String userId, float goldValue, int guessType, int indexType, int periodNum, int guessValue, float indexResult, boolean isReward, float rewardCount, int rewardFlag, int handlerFlag) {
+    public GuessMantissaRecord(String objectId, String userId, float goldValue,
+                               int guessType, int indexType, int periodNum,
+                               int guessValue, float indexResult,
+                               float rewardCount, int rewardFlag, int handlerFlag) {
         this.objectId = objectId;
         this.userId = userId;
         this.goldValue = goldValue;
@@ -48,7 +51,6 @@ public class GuessMantissaRecord {
         this.periodNum = periodNum;
         this.guessValue = guessValue;
         this.indexResult = indexResult;
-        this.isReward = isReward;
         this.rewardCount = rewardCount;
         this.rewardFlag = rewardFlag;
         this.handlerFlag = handlerFlag;
@@ -86,9 +88,6 @@ public class GuessMantissaRecord {
         return indexResult;
     }
 
-    public boolean isReward() {
-        return isReward;
-    }
 
     public float getRewardCount() {
         return rewardCount;
@@ -134,9 +133,6 @@ public class GuessMantissaRecord {
         this.indexResult = indexResult;
     }
 
-    public void setReward(boolean reward) {
-        isReward = reward;
-    }
 
     public void setRewardCount(float rewardCount) {
         this.rewardCount = rewardCount;

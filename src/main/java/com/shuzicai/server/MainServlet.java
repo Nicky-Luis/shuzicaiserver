@@ -4,6 +4,7 @@ import com.shuzicai.server.task.QuartzManager;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.quartz.SchedulerException;
 
 import java.io.IOException;
 
@@ -41,7 +42,12 @@ public class MainServlet extends HttpServlet {
         // 初始化日志路径
         initLog4j(config);
         logger.info("---执行初始化,开始任务---");
-        QuartzManager.startTask();
+        try {
+            QuartzManager.startTask();
+        } catch (SchedulerException e) {
+            logger.error("---任务开启失败---");
+            e.printStackTrace();
+        }
     }
 
     /**
