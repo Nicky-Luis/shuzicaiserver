@@ -31,9 +31,9 @@ public class HandlerTaskJob implements Job {
         //判断时间
         Calendar c = Calendar.getInstance();
         String currentTime = c.get(Calendar.HOUR_OF_DAY) + ":" + c.get(Calendar.MINUTE);
-        boolean isAM = DateUtils.isInTime("00:00-04:00", currentTime);
+        //boolean isAM = DateUtils.isInTime("00:00-04:00", currentTime);
         boolean isPM = DateUtils.isInTime("09:00-23:59", currentTime);
-        if (isAM || isPM) {
+        if (/*isAM ||*/ isPM) {
             GameLondonService.getLondonGoldValue();
         } else {
             log.info("\n=====伦敦金操作，不在时间范围之内=======");

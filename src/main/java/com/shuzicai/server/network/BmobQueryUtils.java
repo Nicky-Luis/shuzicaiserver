@@ -91,13 +91,14 @@ public class BmobQueryUtils {
      * @param value
      * @return
      */
-    public BmobQueryUtils LessThan(int value) {
+    public String LessThan(int value) {
+        JSONObject resultObject = new JSONObject();
         try {
-            conditionObject.put("$lt", value);
+            resultObject.put("$lt", value);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return this;
+        return resultObject.toString();
     }
 
     /**
@@ -121,13 +122,14 @@ public class BmobQueryUtils {
      * @param value
      * @return
      */
-    public BmobQueryUtils LessThanEqual(int value) {
+    public String LessThanEqual(int value) {
+        JSONObject resultObject = new JSONObject();
         try {
-            conditionObject.put("$lte", value);
+            resultObject.put("$lte", value);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return this;
+        return resultObject.toString();
     }
 
     /**
@@ -347,7 +349,7 @@ public class BmobQueryUtils {
      * @return
      */
     public String and(JSONObject where1, JSONObject where2) {
-        JSONArray jsonArray =new JSONArray();
+        JSONArray jsonArray = new JSONArray();
         jsonArray.put(where1);
         jsonArray.put(where2);
 

@@ -27,9 +27,9 @@ public class QuartzManager {
     //日志
     private static Logger log = LoggerFactory.getLogger(QuartzManager.class);
     //  星期一到星期五的没10分钟触发一次
-    private final static String TaskCronExpression = "0 13/3 * ? * MON-SAT";
+    private final static String TaskCronExpression = "0 5/10 * ? * MON-FRI";
     //测试
-    private final static String TestExpression = "0 29/2 * ? * MON-FRI";
+    private final static String TestExpression = "0 12/3 * ? * MON-SUN";
     //Scheduler
     private static Scheduler scheduler;
 

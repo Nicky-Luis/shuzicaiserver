@@ -4,6 +4,7 @@ package com.shuzicai.server.network;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.shuzicai.server.entry.Config;
+import com.shuzicai.server.entry.ForecastStatistic;
 import com.shuzicai.server.entry.GuessForecastRecord;
 import com.shuzicai.server.entry.GuessMantissaRecord;
 import com.shuzicai.server.entry.GuessWholeRecord;
@@ -163,6 +164,14 @@ public interface APICollections {
     Call<JsonArray> bmobBatch(@Body Map<String, List> bean);
 
 
+    /**
+     * 添加涨跌预测统计记录
+     *
+     * @param bean
+     * @return
+     */
+    @POST("1/classes/ForecastStatistic")
+    Call<JsonObject> addForecastStatistic(@Body ForecastStatistic bean);
     /**
      * 获取服务器时间
      *

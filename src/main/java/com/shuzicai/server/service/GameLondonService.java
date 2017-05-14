@@ -102,7 +102,7 @@ public class GameLondonService {
                     if (null != gameInfo) {
                         //保存上一期的结果
                         int num = gameInfo.getNewestNum();
-                        londonGold.setPeriodsNum(num);
+                        londonGold.setPeriodsNum(num - 1);
                         gameInfo.setNewestNum(num + 1);
                         //上传数据
                         updateInfo(londonGold, gameInfo);
@@ -148,13 +148,11 @@ public class GameLondonService {
                 logger.info("上传伦敦金数据与最新的期数成功,resultCount = " + resultCount);
                 logger.info("\n\n==========开始预测结果处理================ ");
                 if (2 == resultCount) {
-                    int currentNum = gameInfo.getNewestNum() - 1;
+                    int currentNum = gameInfo.getNewestNum() - 2;
                     if (currentNum > 0) {
-                        //三种猜测结果处理
+                        //涨跌猜测结果处理
                         GuessForecastService.startForecastHandler(londonGold, currentNum);
-                        GuessMantissaService.startMantissaHandler(londonGold, currentNum);
-                        GuessWholeService.startGuessWholeHandler(londonGold, currentNum);
-                    }else {
+                    } else {
                         logger.error("期数信息有误");
                     }
                 } else {

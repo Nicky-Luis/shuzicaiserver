@@ -4,6 +4,7 @@ package com.shuzicai.server.network;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.shuzicai.server.entry.Config;
+import com.shuzicai.server.entry.ForecastStatistic;
 import com.shuzicai.server.entry.GuessForecastRecord;
 import com.shuzicai.server.entry.GuessMantissaRecord;
 import com.shuzicai.server.entry.GuessWholeRecord;
@@ -120,6 +121,19 @@ public class APIInteractive {
         NetworkRequest.netRequest(call, callback);
     }
 
+    /**
+     * 添加涨跌预测统计
+     *
+     * @param data
+     * @param callback
+     */
+    public static void addForecastStatistic(ForecastStatistic data, final INetworkResponse callback) {
+        if (null == request) {
+            initRetrofit();
+        }
+        Call<JsonObject> call = request.addForecastStatistic(data);
+        NetworkRequest.netRequest(call, callback);
+    }
 
     /**
      * 获取涨跌预测的信息
