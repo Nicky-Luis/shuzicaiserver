@@ -2,7 +2,7 @@
 <web-app version="2.4"
          xmlns="http://java.sun.com/xml/ns/j2ee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2eehttp://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
     <display-name>helloapp</display-name>
 
@@ -22,7 +22,7 @@
         <url-pattern>/main</url-pattern>
     </servlet-mapping>
 
-    <!-- 系统初始化配置信息  servlet -->
+    <!--系统初始化配置信息servlet-->
     <servlet>
         <servlet-name>log4jInit</servlet-name>
         <servlet-class>com.shuzicai.server.Log4jInitServlet</servlet-class>
@@ -40,5 +40,17 @@
     <servlet-mapping>
         <servlet-name>log4jInit</servlet-name>
         <url-pattern>/log4j</url-pattern>
+    </servlet-mapping>
+
+    <!--主支付servlet类-->
+    <servlet>
+        <servlet-name>PayServlet</servlet-name>
+        <servlet-class>com.shuzicai.server.PayServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>PayServlet</servlet-name>
+        <url-pattern>/pay</url-pattern>
     </servlet-mapping>
 </web-app>

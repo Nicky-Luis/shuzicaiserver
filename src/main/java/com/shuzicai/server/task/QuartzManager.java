@@ -29,7 +29,7 @@ public class QuartzManager {
     //  星期一到星期五的没10分钟触发一次
     private final static String TaskCronExpression = "0 5/10 * ? * MON-FRI";
     //测试
-    private final static String TestExpression = "0 12/3 * ? * MON-SUN";
+    private final static String TestExpression = "0 5/10 * ? * MON-SUN";
     //Scheduler
     private static Scheduler scheduler;
 
